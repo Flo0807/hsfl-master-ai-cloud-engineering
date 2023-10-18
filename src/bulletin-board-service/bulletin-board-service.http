@@ -1,0 +1,59 @@
+### Get all posts
+GET http://localhost:8080/posts
+Accept: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Get post by id
+GET http://localhost:8080/posts/1
+Accept: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Create post
+POST http://localhost:8080/posts
+Content-Type: application/json
+
+{
+    "title": "Post title",
+    "content": "Post content"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+
+
+### Update post
+PUT http://localhost:8080/posts/1
+Content-Type: application/json
+
+{
+    "title": "Post title",
+    "content": "Post content"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Delete post
+DELETE http://localhost:8080/posts/1
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}
