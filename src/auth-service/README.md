@@ -21,8 +21,6 @@ jwt:
     secret: secret
     access_token:
         expiration: 3600
-    refresh_token:
-        expiration: 86400
 db:
     host: localhost
     port: 5432

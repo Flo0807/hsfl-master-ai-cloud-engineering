@@ -1,0 +1,10 @@
+database:
+  host: 'localhost'
+  user: 'postgres'
+  password: 'password'
+  port: 5432
+  dbname: 'postgres'
+jwt:
+  secret: 'secret'
+  access_token:
+    expiration: 3600

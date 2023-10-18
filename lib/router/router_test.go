@@ -59,4 +59,64 @@ func TestRouter(t *testing.T) {
 		assert.Equal(t, "route", ctx.Value("route"))
 		assert.Equal(t, "params", ctx.Value("params"))
 	})
+
+	t.Run("test post request", func(t *testing.T) {
+		// given
+		router := New()
+		var ctx context.Context
+		router.POST("/the/:route/with/:params", func(w http.ResponseWriter, r *http.Request) {
+			ctx = r.Context()
+		})
+
+		w := httptest.NewRecorder()
+		r := httptest.NewRequest("POST", "/the/route/with/params", nil)
+
+		// when
+		router.ServeHTTP(w, r)
+
+		// then
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "route", ctx.Value("route"))
+		assert.Equal(t, "params", ctx.Value("params"))
+	})
+
+	t.Run("test put request", func(t *testing.T) {
+		// given
+		router := New()
+		var ctx context.Context
+		router.PUT("/the/:route/with/:params", func(w http.ResponseWriter, r *http.Request) {
+			ctx = r.Context()
+		})
+
+		w := httptest.NewRecorder()
+		r := httptest.NewRequest("PUT", "/the/route/with/params", nil)
+
+		// when
+		router.ServeHTTP(w, r)
+
+		// then
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "route", ctx.Value("route"))
+		assert.Equal(t, "params", ctx.Value("params"))
+	})
+
+	t.Run("test delete request", func(t *testing.T) {
+		// given
+		router := New()
+		var ctx context.Context
+		router.DELETE("/the/:route/with/:params", func(w http.ResponseWriter, r *http.Request) {
+			ctx = r.Context()
+		})
+
+		w := httptest.NewRecorder()
+		r := httptest.NewRequest("DELETE", "/the/route/with/params", nil)
+
+		// when
+		router.ServeHTTP(w, r)
+
+		// then
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "route", ctx.Value("route"))
+		assert.Equal(t, "params", ctx.Value("params"))
+	})
 }
