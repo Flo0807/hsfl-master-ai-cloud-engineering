@@ -42,7 +42,11 @@ func main() {
 	}
 
 	hasher := crypto.NewBcryptHasher()
-	jwtTokenGenerator := auth.NewJwtTokenGenerator(c.Jwt)
+	jwtTokenGenerator, err := auth.NewJwtTokenGenerator(c.Jwt)
+
+	if err != nil {
+		log.Fatalf("error while creating jwt token generator: %s", err.Error())
+	}
 
 	handler := router.NewRouter(
 		handler.NewLoginHandler(userRepository, hasher, jwtTokenGenerator),

@@ -12,13 +12,21 @@ Setup postgres database using docker:
 docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
 ```
 
+### Generate key
+
+The auth service uses a ECDSA private key to sign JWTs. The key can be generated using the following command:
+
+```bash
+ssh-keygen -t ecdsa -f /path/to/key -m pem
+```
+
 ## Config
 
 Example config:
 
 ```yaml
 jwt:
-    secret: secret
+    signKey: /path/to/key
     access_token:
         expiration: 3600
 db:

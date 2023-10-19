@@ -1,26 +1,45 @@
 package auth
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestJwtTokenGenerator(t *testing.T) {
-	generator := JwtTokenGenerator{[]byte("super_secret_key"), 3600}
+	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	generator := JwtTokenGenerator{privateKey, 3600}
 
 	t.Run("generate valid token", func(t *testing.T) {
 		// given
-		claims := map[string]interface{}{
+		givenClaims := map[string]interface{}{
 			"sub":   123,
 			"email": "email@example.com",
 		}
 
 		// when
-		token, err := generator.GenerateToken(claims)
+		token, err := generator.GenerateToken(givenClaims)
 
 		// test
 		assert.NoError(t, err)
-		assert.Equal(t, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQGV4YW1wbGUuY29tIiwic3ViIjoxMjN9.LwRCkXk83at4OLC-3NKSfErtEmlNIH5E7ga3T_U7qR8", token)
+		tokenParts := strings.Split(token, ".")
+		assert.Len(t, tokenParts, 3)
+
+		b, _ := base64.
+			StdEncoding.
+			WithPadding(base64.NoPadding).
+			DecodeString(tokenParts[1])
+
+		var claims map[string]interface{}
+		json.Unmarshal(b, &claims)
+
+		assert.Equal(t, float64(123), claims["sub"])
+		assert.Equal(t, "email@example.com", claims["email"])
 	})
 }

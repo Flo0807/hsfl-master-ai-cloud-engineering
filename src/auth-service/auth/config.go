@@ -1,6 +1,6 @@
 package auth
 
 type Config interface {
-	GetSecret() []byte
+	GetPrivateKey() (any, error)
 	GetExpiration() int
 }
