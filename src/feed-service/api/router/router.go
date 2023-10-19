@@ -12,7 +12,6 @@ type Router struct {
 func New(feedController *feed.DefaultController)*Router {
 	r := router.New()
 
-	r.GET("/feed/:amount", feedController.GetFeedWithAmount)
 	r.GET("/feed", feedController.GetFeed)
 	
 	return &Router{r}

@@ -1,8 +1,7 @@
 package feed
 import(
 	"net/http"
-	"fmt"
-	"strconv"
+	"encoding/json"
 
 )
 type DefaultController struct {
@@ -13,26 +12,32 @@ func NewDefaultController(
 }
 
 func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {	
-		// TODO Correct Implementation
-		resp, err := http.Get("http://localhost:3000/posts")
-		fmt.Println(resp)
+		resp,err := http.Get("http://localhost:3000/posts")
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Failed to fetch data")
+			return
+		}
+		respondWithJSON(w, http.StatusOK, resp)
 		
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 }
 
-func (ctrl *DefaultController) GetFeedWithAmount(w http.ResponseWriter, r *http.Request) {
-	amount := r.Context().Value("amount").(string)
 
-	amo, err := strconv.ParseInt(amount, 10, 64)
-		fmt.Println(amo)
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, err := json.Marshal(payload)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	_, err = w.Write(response)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
 }
-	
+
+// Helper function to respond with an error message
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, map[string]string{"error": message})
+}
