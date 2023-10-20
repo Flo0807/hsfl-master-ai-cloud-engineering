@@ -1,9 +1,10 @@
 package models
-import(
+
+import (
 	"github.com/jinzhu/gorm"
 )
 
-type Feed struct{
+type Feed struct {
 	posts []Post
 }
 type Post struct {

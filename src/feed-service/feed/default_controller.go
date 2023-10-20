@@ -1,26 +1,26 @@
 package feed
-import(
-	"net/http"
-	"encoding/json"
 
+import (
+	"encoding/json"
+	"net/http"
 )
+
 type DefaultController struct {
 }
-func NewDefaultController(
-) *DefaultController {
+
+func NewDefaultController() *DefaultController {
 	return &DefaultController{}
 }
 
-func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {	
-		resp,err := http.Get("http://localhost:3000/posts")
-		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, "Failed to fetch data")
-			return
-		}
-		respondWithJSON(w, http.StatusOK, resp)
-		
-}
+func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("http://localhost:3000/posts")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to fetch data")
+		return
+	}
+	respondWithJSON(w, http.StatusOK, resp)
 
+}
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)
