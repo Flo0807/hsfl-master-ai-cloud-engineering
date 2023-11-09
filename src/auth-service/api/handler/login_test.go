@@ -36,7 +36,7 @@ func TestLoginHandler(t *testing.T) {
 		for _, test := range tests {
 			// given
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest("POST", "/login", test)
+			r := httptest.NewRequest("POST", "/auth/auth/login", test)
 
 			// when
 			handler.Login(w, r)
@@ -56,7 +56,7 @@ func TestLoginHandler(t *testing.T) {
 		for _, test := range tests {
 			// given
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest("POST", "/login", test)
+			r := httptest.NewRequest("POST", "/auth/auth/login", test)
 
 			// when
 			handler.Login(w, r)
@@ -69,7 +69,7 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 401 UNAUTHORIZED if user does not exist", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -87,7 +87,7 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 401 UNAUTHORIZED if password is invalid", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -110,7 +110,7 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 500 INTERNAL SERVER ERROR if user repository fails", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -128,7 +128,7 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 200 OK", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().

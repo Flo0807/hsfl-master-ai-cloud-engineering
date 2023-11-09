@@ -33,7 +33,7 @@ func TestRegisterHandler(t *testing.T) {
 		for _, test := range tests {
 			// given
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest("POST", "/register", test)
+			r := httptest.NewRequest("POST", "/auth/register", test)
 
 			// when
 			handler.Register(w, r)
@@ -53,7 +53,7 @@ func TestRegisterHandler(t *testing.T) {
 		for _, test := range tests {
 			// given
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest("POST", "/register", test)
+			r := httptest.NewRequest("POST", "/auth/register", test)
 
 			// when
 			handler.Register(w, r)
@@ -66,7 +66,7 @@ func TestRegisterHandler(t *testing.T) {
 	t.Run("should return 500 INTERNAL SERVER ERROR if user repository fails", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -83,7 +83,7 @@ func TestRegisterHandler(t *testing.T) {
 	t.Run("should return 409 CONFLICT if user already exists", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -100,7 +100,7 @@ func TestRegisterHandler(t *testing.T) {
 	t.Run("should return 500 INTERNAL SERVER ERROR if hashing password fails", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -122,7 +122,7 @@ func TestRegisterHandler(t *testing.T) {
 	t.Run("should return 500 INTERNAL SERVER ERROR if creating user fails", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
@@ -149,7 +149,7 @@ func TestRegisterHandler(t *testing.T) {
 	t.Run("should return 201 CREATED if user is created", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/auth/register", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
 
 		userRepository.
 			EXPECT().

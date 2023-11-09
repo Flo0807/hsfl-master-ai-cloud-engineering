@@ -14,8 +14,8 @@ type Router struct {
 func NewRouter(loginHandler *handler.LoginHandler, registerHandler *handler.RegisterHandler) *Router {
 	r := router.New()
 
-	r.POST("/login", loginHandler.Login)
-	r.POST("/register", registerHandler.Register)
+	r.POST("/auth/login", loginHandler.Login)
+	r.POST("/auth/register", registerHandler.Register)
 
 	return &Router{r}
 }
