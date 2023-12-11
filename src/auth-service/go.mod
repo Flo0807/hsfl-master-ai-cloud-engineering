@@ -3,7 +3,7 @@ module github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/auth-service
 go 1.21.2
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.8.4
