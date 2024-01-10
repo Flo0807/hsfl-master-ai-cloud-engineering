@@ -1,0 +1,167 @@
+###############
+#   Services  #
+###############
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+    tier: backend
+  ports:
+    - protocol: TCP
+      name: http
+      port: 3001
+      targetPort: 3001
+    - protocol: TCP
+      name: grpc
+      port: 3011
+      targetPort: 3011
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bulletin-board-service
+spec:
+  selector:
+    app: bulletin-board-service
+    tier: backend
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+---
+###############
+# Deployments #
+###############
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth-service
+        tier: backend
+    spec:
+      containers:
+        - name: auth-service
+          image: "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/auth-service:main"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3001
+            - name: grpc
+              containerPort: 3011
+          env:
+            - name: HTTP_SERVER_PORT
+              value: "3001"
+            - name: GRPC_SERVER_PORT
+              value: "3011"
+            - name: JWT_PRIVATE_KEY
+              value: "/jwt-volume/private.key"
+            - name: DB_HOST
+              value: "postgres-service.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              value: "board-hub"
+          volumeMounts:
+            # name must match the volume name below
+            - name: jwt-volume
+              mountPath: /jwt-volume
+              readOnly: true
+      volumes:
+        - name: jwt-volume
+          secret:
+            secretName: jwt-private-key
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulletin-board-service
+spec:
+  selector:
+    matchLabels:
+      app: bulletin-board-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bulletin-board-service
+        tier: backend
+    spec:
+      containers:
+        - name: bulletin-board-service
+          image: "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service:main"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3002
+          env:
+            - name: HTTP_SERVER_PORT
+              value: "3002"
+            - name: AUTH_SERVICE_URL_GRPC
+              value: "auth-service.default.svc.cluster.local:3011"
+            - name: DB_HOST
+              value: "postgres-service.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              value: "board-hub"
+---
+###############
+#  Networking #
+###############
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: proxy-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /auth-service
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /bulletin-board
+            pathType: Prefix
+            backend:
+              service:
+                name: bulletin-board-service
+                port:
+                  number: 3002
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 3000
