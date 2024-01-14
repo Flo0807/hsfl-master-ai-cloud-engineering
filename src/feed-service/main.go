@@ -5,11 +5,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/api/router"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/config"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/feed"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -23,7 +26,13 @@ func main() {
 
 	feedController := feed.NewDefaultController()
 
-	handler := router.New(feedController)
+	grpcConn, err := grpc.Dial(cfg.BuleltinBoardServiceUrlGrpc, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("error while connecting to auth service: %s", err.Error())
+	}
+
+	bulletinBoardServiceClient := bulletin_board.NewBulletinBoardServiceClient(grpcConn)
+	handler := router.New(feedController, bulletinBoardServiceClient)
 
 	log.Printf("Starting HTTP server on port %s", cfg.HttpServerPort)
 

@@ -1,14 +1,9 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 )
 
 type Feed struct {
-	posts []Post
-}
-type Post struct {
-	gorm.Model
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	Posts []models.Post `json:"posts"`
 }

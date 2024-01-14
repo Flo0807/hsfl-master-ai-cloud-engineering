@@ -1,0 +1,26 @@
+syntax = "proto3";
+package bulletin_board;
+import "google/protobuf/timestamp.proto";
+option go_package = "./rpc/bulletin_board";
+
+
+message Feed {
+    repeated Post posts = 1;
+}
+
+service BulletinBoardService {
+    rpc getPosts(Request) returns (Feed);
+}
+
+message Post {
+    uint64 ID = 1;
+    google.protobuf.Timestamp CreatedAt = 2;
+    google.protobuf.Timestamp UpdatedAt = 3;
+    google.protobuf.Timestamp DeletedAt = 4;
+    string Title = 5;
+    string Content = 6;
+}
+
+message Request{
+    uint64 amount = 1;
+}

@@ -3,15 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/api/handler"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/api/router"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/api/rpc"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/config"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/auth"
+	proto "github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
@@ -55,10 +58,27 @@ func main() {
 
 	r := router.NewRouter(healthHandler, postHandler, authServiceClient)
 
-	log.Printf("Starting HTTP server on port %s", cfg.HttpServerPort)
+	go func() {
+		log.Printf("Starting HTTP server on port %s", cfg.HttpServerPort)
 
-	addr := fmt.Sprintf("0.0.0.0:%s", cfg.HttpServerPort)
-	if err := http.ListenAndServe(addr, r); err != nil {
-		log.Fatalf("error while listen and serve: %s", err.Error())
+		addr := fmt.Sprintf("0.0.0.0:%s", cfg.HttpServerPort)
+		if err := http.ListenAndServe(addr, r); err != nil {
+			log.Fatalf("error while listen and serve: %s", err.Error())
+		}
+	}()
+	//go func() {
+	log.Printf("Starting gRPC server on port %s", cfg.GrpcServerPort)
+
+	listener, err := net.Listen("tcp", ":"+cfg.GrpcServerPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
+	grpcServer := grpc.NewServer()
+	bulletinBoardServiceServer := rpc.NewBulletinBoardServiceServer(postHandler)
+	proto.RegisterBulletinBoardServiceServer(grpcServer, bulletinBoardServiceServer)
+
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("failed to serve: %s", err.Error())
+	}
+	//}()
 }
