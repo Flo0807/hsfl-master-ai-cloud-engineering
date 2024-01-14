@@ -14,7 +14,6 @@ func NewDefaultController() *DefaultController {
 }
 
 func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("feed")
 	return
 }
 func (ctrl *DefaultController) GetHealth(w http.ResponseWriter, r *http.Request) {

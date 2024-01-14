@@ -14,17 +14,17 @@ type UserIdKey string
 func CreateBulletinBoardMiddleware(bulletinBoardServiceClient bulletin_board.BulletinBoardServiceClient) router.MiddlewareFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("In Middleware")
-			resp, err := bulletinBoardServiceClient.GetPosts(context.Background(), &bulletin_board.Request{})
-			for _, v := range resp.Posts {
-				fmt.Println(v.Content)
 
-			}
+			resp, err := bulletinBoardServiceClient.GetPosts(context.Background(), &bulletin_board.Request{Amount: 10})
+
 			if err != nil {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
+			for _, v := range resp.Posts {
+				fmt.Println(v.Content)
 
+			}
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, "posts", resp.Posts)
 			r = r.WithContext(ctx)

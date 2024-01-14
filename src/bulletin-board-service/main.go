@@ -74,7 +74,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	bulletinBoardServiceServer := rpc.NewBulletinBoardServiceServer(postHandler)
+	bulletinBoardServiceServer := rpc.NewBulletinBoardServiceServer(postService)
 	proto.RegisterBulletinBoardServiceServer(grpcServer, bulletinBoardServiceServer)
 
 	if err := grpcServer.Serve(listener); err != nil {

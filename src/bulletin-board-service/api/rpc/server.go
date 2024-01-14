@@ -3,8 +3,8 @@ package rpc
 import (
 	"context"
 
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/api/handler"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
 	proto "github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -12,18 +12,17 @@ import (
 
 type BulletinBoardServiceServer struct {
 	proto.UnimplementedBulletinBoardServiceServer
-	postHandler handler.PostHandler
+	postService service.PostService
 }
 
-func NewBulletinBoardServiceServer(postHandler *handler.PostHandler) *BulletinBoardServiceServer {
+func NewBulletinBoardServiceServer(postService service.PostService) *BulletinBoardServiceServer {
 	return &BulletinBoardServiceServer{
-		postHandler: *postHandler,
+		postService: postService,
 	}
 }
 
 func (a *BulletinBoardServiceServer) GetPosts(context.Context, *bulletin_board.Request) (*proto.Feed, error) {
-	claims := a.postHandler.PostService.GetAll(int64(10), int64(1))
-
+	claims := a.postService.GetAll(int64(10), int64(1))
 	var newArray []*proto.Post
 
 	for _, claims := range claims.Records {
