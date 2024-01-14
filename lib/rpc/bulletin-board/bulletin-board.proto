@@ -4,14 +4,14 @@ import "google/protobuf/timestamp.proto";
 option go_package = "./rpc/bulletin_board";
 
 
-message Feed {
-    repeated Post posts = 1;
-}
+
 
 service BulletinBoardService {
     rpc getPosts(Request) returns (Feed);
 }
-
+message Feed {
+    repeated Post posts = 1;
+}
 message Post {
     uint64 ID = 1;
     google.protobuf.Timestamp CreatedAt = 2;

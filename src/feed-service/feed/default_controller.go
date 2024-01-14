@@ -2,23 +2,48 @@ package feed
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"strconv"
+
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
 )
 
 type DefaultController struct {
+	client bulletin_board.BulletinBoardServiceClient
 }
 
-func NewDefaultController() *DefaultController {
-	return &DefaultController{}
+func NewDefaultController(bulletinBoardClient bulletin_board.BulletinBoardServiceClient) *DefaultController {
+	return &DefaultController{
+		client: bulletinBoardClient,
+	}
 }
 
 func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
-	return
+	amo, err := strconv.ParseInt(r.FormValue("amount"), 10, 0)
+
+	resp, err := ctrl.client.GetPosts(r.Context(), &bulletin_board.Request{Amount: 10})
+	if err != nil || amo <= 0 {
+		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	posts := resp.Posts
+	if !(amo >= int64(len(resp.Posts))) {
+		posts = resp.Posts[:amo]
+
+	}
+	feed := bulletin_board.Feed{
+		Posts: posts,
+	}
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, feed)
+
 }
 func (ctrl *DefaultController) GetHealth(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("feed")
-	return
+	w.WriteHeader(http.StatusOK)
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {

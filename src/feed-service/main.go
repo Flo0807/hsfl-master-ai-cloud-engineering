@@ -24,15 +24,14 @@ func main() {
 		log.Fatalf("error while parsing enviroment variables: %s", err.Error())
 	}
 
-	feedController := feed.NewDefaultController()
-
 	grpcConn, err := grpc.Dial(cfg.BuleltinBoardServiceUrlGrpc, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("error while connecting to auth service: %s", err.Error())
 	}
 
 	bulletinBoardServiceClient := bulletin_board.NewBulletinBoardServiceClient(grpcConn)
-	handler := router.New(feedController, bulletinBoardServiceClient)
+	feedController := feed.NewDefaultController(bulletinBoardServiceClient)
+	handler := router.New(feedController)
 
 	log.Printf("Starting HTTP server on port %s", cfg.HttpServerPort)
 
