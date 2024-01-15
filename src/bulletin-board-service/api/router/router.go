@@ -24,6 +24,8 @@ func NewRouter(
 	r.GET("/bulletin-board/health", healthHandler.Health)
 	r.GET("/bulletin-board/posts", postHandler.GetPosts, authMiddleware)
 	r.GET("/bulletin-board/posts/:id", postHandler.GetPost)
+	r.GET("/bulletin-board/random", postHandler.GetRandom)
+	r.GET("/bulletin-board/random-request-coalescing", postHandler.GetRandomRequestCoalescing)
 	r.POST("/bulletin-board/posts", postHandler.CreatePost)
 	r.PUT("/bulletin-board/posts/:id", postHandler.UpdatePost)
 	r.DELETE("/bulletin-board/posts/:id", postHandler.DeletePost)

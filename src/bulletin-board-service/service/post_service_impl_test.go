@@ -1,11 +1,12 @@
 package service
 
 import (
+	"testing"
+
 	mocks "github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/_mocks"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
 	"go.uber.org/mock/gomock"
-	"testing"
 )
 
 func TestCreate(t *testing.T) {
@@ -77,4 +78,16 @@ func TestDelete(t *testing.T) {
 	mockRepo.EXPECT().Delete(&post)
 
 	postService.Delete(&post)
+}
+
+func TestCount(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mocks.NewMockPostRepository(ctrl)
+	postService := NewPostService(mockRepo)
+
+	mockRepo.EXPECT().Count().Return(int64(1))
+
+	postService.Count()
 }

@@ -2,10 +2,14 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
+	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"strconv"
+
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
+	"golang.org/x/sync/singleflight"
 
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 )
@@ -13,11 +17,13 @@ import (
 // PostHandler handles HTTP requests for Post
 type PostHandler struct {
 	PostService service.PostService
+	g           *singleflight.Group
 }
 
 // NewPostHandler creates a new PostHandler
 func NewPostHandler(service service.PostService) *PostHandler {
-	return &PostHandler{PostService: service}
+	g := &singleflight.Group{}
+	return &PostHandler{PostService: service, g: g}
 }
 
 // CreatePost handles the creation of a new post
@@ -126,6 +132,47 @@ func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 
 	h.PostService.Delete(&post)
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+}
+
+// GetRandom handles the retrieval of a random post
+func (h *PostHandler) GetRandom(w http.ResponseWriter, r *http.Request) {
+	count := h.PostService.Count()
+
+	if count == 0 {
+		respondWithError(w, http.StatusNotFound, "Post not found")
+		return
+	}
+
+	randomID := uint(rand.Intn(int(count)) + 1)
+
+	msg, err, _ := h.g.Do(fmt.Sprint(randomID), func() (interface{}, error) {
+		post := h.PostService.GetByID(randomID)
+
+		return post, nil
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, msg.(models.Post))
+}
+
+// GetRandom handles the retrieval of a random post with request coalescing
+func (h *PostHandler) GetRandomRequestCoalescing(w http.ResponseWriter, r *http.Request) {
+	count := h.PostService.Count()
+
+	if count == 0 {
+		respondWithError(w, http.StatusNotFound, "Post not found")
+		return
+	}
+
+	randomID := uint(rand.Intn(int(count)) + 1)
+
+	post := h.PostService.GetByID(randomID)
+
+	respondWithJSON(w, http.StatusOK, post)
 }
 
 // Helper function to respond with JSON

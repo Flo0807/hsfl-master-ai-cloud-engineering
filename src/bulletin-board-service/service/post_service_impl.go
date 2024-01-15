@@ -3,16 +3,20 @@ package service
 import (
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
+	"golang.org/x/sync/singleflight"
 )
 
 // PostServiceImpl handles business logic for Post
 type PostServiceImpl struct {
 	PostRepository repository.PostRepository
+	g              *singleflight.Group
 }
 
 // NewPostService creates a new PostServiceImpl
 func NewPostService(repo repository.PostRepository) *PostServiceImpl {
-	return &PostServiceImpl{PostRepository: repo}
+	g := &singleflight.Group{}
+
+	return &PostServiceImpl{PostRepository: repo, g: g}
 }
 
 // Create a new post
@@ -28,6 +32,11 @@ func (s *PostServiceImpl) GetAll(take int64, skip int64) repository.PostPage {
 // GetByID Get a post by ID
 func (s *PostServiceImpl) GetByID(id uint) models.Post {
 	return s.PostRepository.FindByID(id)
+}
+
+// Count Get the number of posts
+func (s *PostServiceImpl) Count() int64 {
+	return s.PostRepository.Count()
 }
 
 // Update a post

@@ -78,3 +78,10 @@ func (r *PostPsqlRepository) Update(post *models.Post) {
 func (r *PostPsqlRepository) Delete(post *models.Post) {
 	r.DB.Delete(post)
 }
+
+// Return the number of posts
+func (r *PostPsqlRepository) Count() int64 {
+	var count int64
+	r.DB.Model(&models.Post{}).Count(&count)
+	return count
+}

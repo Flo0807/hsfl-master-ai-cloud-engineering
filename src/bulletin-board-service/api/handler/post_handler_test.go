@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	mocks "github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/_mocks"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
-	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	mocks "github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/_mocks"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCreatePost(t *testing.T) {
@@ -260,5 +261,53 @@ func TestDeletePost(t *testing.T) {
 
 		// Assertions
 		assert.Equal(t, http.StatusNotFound, w.Code)
+	})
+}
+
+func TestGetRandom(t *testing.T) {
+	// Setup
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := mocks.NewMockPostService(ctrl)
+	handler := NewPostHandler(mockService)
+
+	t.Run("should return 200 OK with post", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/posts/random", nil)
+
+		// Expectations
+		mockService.EXPECT().Count().Return(int64(1))
+		mockService.EXPECT().GetByID(uint(1)).Return(models.Post{ID: 1})
+
+		// Test
+		handler.GetRandom(w, req)
+
+		// Assertions
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+}
+
+func TestGetRandomRequestCoalescing(t *testing.T) {
+	// Setup
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := mocks.NewMockPostService(ctrl)
+	handler := NewPostHandler(mockService)
+
+	t.Run("should return 200 OK with post", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/posts/random-request-coalescing", nil)
+
+		// Expectations
+		mockService.EXPECT().Count().Return(int64(1))
+		mockService.EXPECT().GetByID(uint(1)).Return(models.Post{ID: 1})
+
+		// Test
+		handler.GetRandom(w, req)
+
+		// Assertions
+		assert.Equal(t, http.StatusOK, w.Code)
 	})
 }

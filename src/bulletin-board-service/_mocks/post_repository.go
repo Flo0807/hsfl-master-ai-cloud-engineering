@@ -39,6 +39,20 @@ func (m *MockPostRepository) EXPECT() *MockPostRepositoryMockRecorder {
 	return m.recorder
 }
 
+// Count mocks base method.
+func (m *MockPostRepository) Count() int64 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Count")
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// Count indicates an expected call of Count.
+func (mr *MockPostRepositoryMockRecorder) Count() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockPostRepository)(nil).Count))
+}
+
 // Create mocks base method.
 func (m *MockPostRepository) Create(post *models.Post) {
 	m.ctrl.T.Helper()

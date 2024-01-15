@@ -65,6 +65,8 @@ func NewReverseProxy(config ReverseProxyConfig) *ReverseProxyHandler {
 }
 
 func (rp *ReverseProxyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Incoming request: %s", r.URL.Path)
+
 	for _, service := range rp.Services {
 		if service.Pattern.MatchString(r.URL.Path) {
 			log.Printf("Proxying %s to %s", r.URL.Path, service.Pattern.String())
