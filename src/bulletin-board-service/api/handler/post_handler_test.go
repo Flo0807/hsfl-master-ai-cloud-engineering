@@ -274,7 +274,7 @@ func TestGetRandom(t *testing.T) {
 
 	t.Run("should return 200 OK with post", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/posts/random", nil)
+		req, _ := http.NewRequest("GET", "/bulletin-board/random", nil)
 
 		// Expectations
 		mockService.EXPECT().Count().Return(int64(1))
@@ -298,14 +298,14 @@ func TestGetRandomRequestCoalescing(t *testing.T) {
 
 	t.Run("should return 200 OK with post", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/posts/random-request-coalescing", nil)
+		req, _ := http.NewRequest("GET", "/bulletin-board/random-request-coalescing", nil)
 
 		// Expectations
 		mockService.EXPECT().Count().Return(int64(1))
 		mockService.EXPECT().GetByID(uint(1)).Return(models.Post{ID: 1})
 
 		// Test
-		handler.GetRandom(w, req)
+		handler.GetRandomRequestCoalescing(w, req)
 
 		// Assertions
 		assert.Equal(t, http.StatusOK, w.Code)
