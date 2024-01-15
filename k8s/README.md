@@ -1,28 +1,29 @@
 # Deployment
 
-## Secrets
+## Prerequisites
 
-Privaten & öffentlichen Schlüssel erzeugen:
+Make sure secrets are created before deploying the application.
 
+Create private and public key for JWT authentication:
 ```
 openssl ecparam -name prime256v1 -genkey -noout -out private.key
 
 openssl ec -in private.key -pubout -out public.key
 ```
 
-Erstellen der Secrets für den privaten und öffentlichen Schlüssel:
+Create the secrets for the private and public key:
 ```
  kubectl create secret generic jwt-private-key --from-file private.key
 
  kubectl create secret generic jwt-public-key --from-file public.key
 ```
 
-Erstellen des Secret für das PostgresDB Passwort:
+Create the secret for the postgres password:
 ```
 kubectl create secret generic postgres-password --from-literal=POSTGRES_PASSWORD=password
 ```
 
-Verifizieren, ob Secrets erfolgreich angelegt wurden:
+Verify that all secrets are created:
 ```
 kubectl get secrets
 
@@ -32,10 +33,47 @@ jwt-public-key      Opaque   1      0m1s
 postgres-password   Opaque   1      0m1s
 ```
 
-## Deploy
+## Deploy on Minikube
+
+Make sure [Minikube](https://minikube.sigs.k8s.io/docs/start/) is properly installed and all secrets are created.
+
+Run `minikube start` to start the cluster.
+
+Enable ingress addon:
+
+```
+minikube addons enable ingress
+```
+
+Deploy the application:
 
 ```
 kubectl create -f . --recursive
 ```
 
+Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/))
+
+You can now access the application at `http:localhost:80`
+
+## Deploy on other Kubernetes Cluster
+
+Make sure you have a working Kubernetes cluster with an ingress controller running. See https://spacelift.io/blog/kubernetes-ingress on how to set up an ingress controller. In addition, make sure all secrets are created.
+
+Deploy the application:
+
+```
+kubectl create -f . --recursive
+```
+
+Run `kubectl get ingress` to get the ingress IP address.
+
+Example:
+
+```
+❯ kubectl get ingress
+NAME            CLASS   HOSTS   ADDRESS        PORTS   AGE
+proxy-ingress   nginx   *       192.168.49.2   80      13m
+```
+
+Access the application at `http://<ingress-ip>:80`.
 
