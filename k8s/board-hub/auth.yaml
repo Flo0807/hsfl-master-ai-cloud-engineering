@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+    tier: backend
+  ports:
+    - protocol: TCP
+      name: http
+      port: 3001
+      targetPort: 3001
+    - protocol: TCP
+      name: grpc
+      port: 3011
+      targetPort: 3011
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: auth-service
+        tier: backend
+    spec:
+      containers:
+        - name: auth-service
+          image: "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/auth-service:main"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3001
+            - name: grpc
+              containerPort: 3011
+          env:
+            - name: HTTP_SERVER_PORT
+              value: "3001"
+            - name: GRPC_SERVER_PORT
+              value: "3011"
+            - name: JWT_PRIVATE_KEY
+              value: "/jwt-volume/private.key"
+            - name: DB_HOST
+              value: "postgres-service.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              value: "board-hub"
+          volumeMounts:
+            # name must match the volume name below
+            - name: jwt-volume
+              mountPath: /jwt-volume
+              readOnly: true
+      volumes:
+        - name: jwt-volume
+          secret:
+            secretName: jwt-private-key

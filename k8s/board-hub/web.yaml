@@ -14,14 +14,14 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-service-deployment
+  name: web-deployment
   labels:
     app: web-service
 spec:
   selector:
     matchLabels:
       app: web-service
-  replicas: 8
+  replicas: 1
   template:
     metadata:
       labels:
@@ -34,5 +34,5 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: SERVER_PORT
+            - name: HTTP_SERVER_PORT
               value: "3000"
