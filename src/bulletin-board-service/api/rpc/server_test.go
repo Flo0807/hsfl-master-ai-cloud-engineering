@@ -84,5 +84,3 @@ func (m *MockPostService) GetByID(int uint) models.Post {
 	// Mocking the Create method, you can customize this based on your test needs
 	return models.Post{}
 }
-
-// Add more test cases as needed
