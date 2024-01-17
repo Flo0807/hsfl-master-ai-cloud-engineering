@@ -2,11 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-alerting
+  namespace: monitoring
 data:
-  provisioning.yaml: |
-    templates:
-      - name: alert-rules-1705483771882
-        template: 
+  rules.yaml: |
           apiVersion: 1
           groups:
             - orgId: 1
