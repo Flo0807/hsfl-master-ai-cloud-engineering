@@ -19,16 +19,27 @@ func NewDefaultController(bulletinBoardClient bulletin_board.BulletinBoardServic
 }
 
 func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
-	amo, err := strconv.ParseInt(r.FormValue("amount"), 10, 0)
+
+	amount := int64(5) // Standardwert für Anzahl der Posts
+
+	amountParam := r.FormValue("amount")
+
+	// Überprüfen und Parsen des optionalen Post Amounts
+	if amountParam != "" {
+		amountValue, err := strconv.ParseInt(amountParam, 10, 0)
+		if err == nil {
+			amount = amountValue
+		}
+	}
 
 	resp, err := ctrl.client.GetPosts(r.Context(), &bulletin_board.Request{Amount: 10})
-	if err != nil || amo <= 0 {
+	if err != nil || amount <= 0 {
 		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 	posts := resp.Posts
-	if !(amo >= int64(len(resp.Posts))) {
-		posts = resp.Posts[:amo]
+	if !(amount >= int64(len(resp.Posts))) {
+		posts = resp.Posts[:amount]
 
 	}
 	feed := bulletin_board.Feed{
