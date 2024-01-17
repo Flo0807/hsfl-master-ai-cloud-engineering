@@ -1,5 +1,6 @@
 # Deployment
 
+
 ## Prerequisites
 
 Make sure secrets are created before deploying the application.
@@ -79,7 +80,25 @@ Access the application at `http://<ingress-ip>:80`.
 
 ## Monitoring
 
-### Access grafana
+### Overview
+
+The application is monitored using Prometheus and Grafana. To access the monitoring dashboard, you need to deploy and configure the monitoring stack.
+[Read the setup section.](#monitoring-setup)
+
+![](./../_img/dashboard-1.png)
+First section of the dashboard shows some general resource metrics and an overview of the application pods per namespace.
+
+![](./../_img/dashboard-2.png)
+Second section displays the inbound and outbound traffic of the application. In addition, a row containing metrics specific to the selected namespace is displayed.
+It is possible to select a namespace from the dropdown menu, otherwise the metrics of all namespaces are displayed.
+
+![](./../_img/dashboard-3.png)
+Last section displays metrics coupled to the namespace and node. In the same manner as the second section, it is possible to select a namespace from the dropdown menu as well as a node. If no node is selected, metrics of all nodes are displayed as well. This section is useful to check the resource usage of specific containers.
+
+
+<a id="monitoring-setup"></a>
+### Setup
+#### Access grafana
 
 Use the following command to get the grafana port:
 
@@ -92,3 +111,16 @@ grafana   NodePort   10.110.91.191   <none>        3000:32702/TCP   17h
 When using minikube, run `minikube service grafana --namespace=monitoring` to open grafana in the browser.
 
 Default grafana credentials are `admin` and `admin`.
+
+
+#### Import dashboard
+
+After the deployment is finished access the grafana dashboard and import the dashboard from `k8s/grafana/Board Hub Monitoring Dashboard-1705485860964.json`.
+
+To import the dashboard:
+1. go to `Dashboards` -> `New` -> `Import` and upload the json file.
+2. Select the `Prometheus` data source.
+3. Click `Import`.
+
+The dashboard should now be available under `Dashboards` -> `Board Hub Monitoring Dashboard`.
+
