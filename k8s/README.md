@@ -103,13 +103,13 @@ You can use the following commands to create test data:
 Create tables:
 
 ```
-cat scripts/data/01-create.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+cat scripts/01-create.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
 ```
 
 Import test data:
 
 ```
-cat scripts/data/02-insert.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+cat scripts/02-insert.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
 ```
 
 You can now log in with the following credentials:
