@@ -45,13 +45,13 @@ spec:
 apiVersion: "autoscaling/v2"
 kind: "HorizontalPodAutoscaler"
 metadata:
-  name: web
+  name: web-deployment
   labels:
-    app: web
+    app: web-service
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: web
+    name: web-deployment
     apiVersion: "apps/v1"
   minReplicas: 1
   maxReplicas: 3
@@ -60,12 +60,6 @@ spec:
       containerResource:
         name: cpu
         container: web-service
-        target:
-          type: Utilization
-          averageUtilization: 50
-    - type: Resource
-      resource:
-        name: memory
         target:
           type: Utilization
           averageUtilization: 50

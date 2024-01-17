@@ -10,11 +10,14 @@ spec:
     - protocol: TCP
       port: 3002
       targetPort: 3002
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bulletin-board-deployment
+  labels:
+    app: bulletin-board-service
 spec:
   selector:
     matchLabels:
@@ -52,17 +55,22 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: DB_NAME
               value: "board-hub"
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
 ---
 apiVersion: "autoscaling/v2"
 kind: "HorizontalPodAutoscaler"
 metadata:
-  name: bulletin-board
+  name: bulletin-board-deployment
   labels:
-    app: bulletin-board
+    app: bulletin-board-service
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: bulletin-board
+    name: bulletin-board-deployment
     apiVersion: "apps/v1"
   minReplicas: 1
   maxReplicas: 3
@@ -71,12 +79,6 @@ spec:
       containerResource:
         name: cpu
         container: bulletin-board-service
-        target:
-          type: Utilization
-          averageUtilization: 50
-    - type: Resource
-      resource:
-        name: memory
         target:
           type: Utilization
           averageUtilization: 50

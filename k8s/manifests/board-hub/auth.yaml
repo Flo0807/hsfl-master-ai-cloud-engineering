@@ -15,6 +15,7 @@ spec:
       name: grpc
       port: 3011
       targetPort: 3011
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -66,6 +67,11 @@ spec:
             - name: jwt-volume
               mountPath: /jwt-volume
               readOnly: true
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
       volumes:
         - name: jwt-volume
           secret:
@@ -74,13 +80,13 @@ spec:
 apiVersion: "autoscaling/v2"
 kind: "HorizontalPodAutoscaler"
 metadata:
-  name: auth
+  name: auth-deployment
   labels:
-    app: auth
+    app: auth-service
 spec:
   scaleTargetRef:
     kind: Deployment
-    name: auth
+    name: auth-deployment
     apiVersion: "apps/v1"
   minReplicas: 1
   maxReplicas: 3
@@ -89,12 +95,6 @@ spec:
       containerResource:
         name: cpu
         container: auth-service
-        target:
-          type: Utilization
-          averageUtilization: 50
-    - type: Resource
-      resource:
-        name: memory
         target:
           type: Utilization
           averageUtilization: 50
