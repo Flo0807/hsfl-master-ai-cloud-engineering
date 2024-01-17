@@ -54,7 +54,7 @@ kubectl apply -f k8s/manifests --recursive
 
 Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/))
 
-You can now access the application at `http:localhost:80`
+You can now access the application at [http://localhost:80](http://localhost:80).
 
 ## Deploy on other Kubernetes Cluster
 
