@@ -70,3 +70,31 @@ spec:
         - name: jwt-volume
           secret:
             secretName: jwt-private-key
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: auth
+  labels:
+    app: auth
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: auth
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: auth-service
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 50

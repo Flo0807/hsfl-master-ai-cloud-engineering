@@ -52,3 +52,31 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: DB_NAME
               value: "board-hub"
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: bulletin-board
+  labels:
+    app: bulletin-board
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: bulletin-board
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: bulletin-board-service
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 50
