@@ -34,6 +34,12 @@ jwt-public-key      Opaque   1      0m1s
 postgres-password   Opaque   1      0m1s
 ```
 
+<a id="metrics-server"></a>
+
+### Metrics Server
+The subfolder `metrics-server` contains the metrics-server deployment. This is required to get the CPU and RAM usage of the pods. This folder contains a modified version of the metrics-server deployment from the official [metrics-server repository](https://github.com/kubernetes-sigs/metrics-server?tab=readme-ov-file#kubernetes-metrics-server) with the `--kubelet-insecure-tls` flag being set. If you are using a different metrics-server deployment, make sure to exclude the `metrics-server` folder from the deployment.
+
+
 ## Deploy on Minikube
 
 Make sure [Minikube](https://minikube.sigs.k8s.io/docs/start/) is properly installed and all secrets are created.
@@ -46,8 +52,15 @@ Enable ingress addon:
 minikube addons enable ingress
 ```
 
-Deploy the application:
+> Note: Make sure you have read the [metrics-server](#metrics-server) section before continuing.
 
+Enable metrics-server addon:
+
+```
+minikube addons enable metrics-server
+```
+
+Deploy the application:
 ```
 kubectl apply -f k8s/manifests --recursive
 ```
