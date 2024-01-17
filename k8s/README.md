@@ -115,7 +115,7 @@ Default grafana credentials are `admin` and `admin`.
 
 #### Import dashboard
 
-After the deployment is finished access the grafana dashboard and import the dashboard from `k8s/grafana/Board Hub Monitoring Dashboard-1705485860964.json`.
+After the deployment is finished access the grafana dashboard and import the dashboard from `k8s/grafana/Board Hub Monitoring Dashboard.json`.
 
 To import the dashboard:
 1. go to `Dashboards` -> `New` -> `Import` and upload the json file.
