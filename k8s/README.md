@@ -1,9 +1,8 @@
 # Deployment
 
-
 ## Prerequisites
 
-Make sure secrets are created before deploying the application.
+Make sure secrets are created before deploying the application. When running the application on minikube, make sure to start minikube before creating the secrets.
 
 Create private and public key for JWT authentication:
 ```
@@ -65,9 +64,9 @@ Deploy the application:
 kubectl apply -f k8s/manifests --recursive
 ```
 
-Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/))
+Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/)) You can then access the application at [http://localhost:80](http://localhost:80).
 
-You can now access the application at [http://localhost:80](http://localhost:80).
+Otherwise, run `minikube ip` to get the ingress IP address or use [`kubectl get ingress`](#kubectl-get-ingress).
 
 ## Deploy on other Kubernetes Cluster
 
@@ -81,6 +80,8 @@ Deploy the application:
 kubectl apply -f k8s/manifests --recursive
 ```
 
+<a id="kubectl-get-ingress"></a>
+
 Run `kubectl get ingress` to get the ingress IP address.
 
 Example:
@@ -92,6 +93,30 @@ proxy-ingress   nginx   *       192.168.49.2   80      13m
 ```
 
 Access the application at `http://<ingress-ip>:80`.
+
+## Import test data
+
+We provide two sql files located in the `scripts` directory. The `01-create.sql` file creates the database and the tables. The `insert.sql` file inserts example data into the database.
+
+You can use the following commands to create test data:
+
+Create tables:
+
+```
+cat scripts/01-create.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+```
+
+Import test data:
+
+```
+cat scripts/02-insert.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+```
+
+You can now log in with the following credentials:
+
+| Username | Password |
+| -------- | -------- |
+| test     | test     |
 
 ## Monitoring
 
@@ -112,6 +137,7 @@ Last section displays metrics coupled to the namespace and node. In the same man
 
 
 <a id="monitoring-setup"></a>
+
 ### Setup
 #### Access grafana
 
