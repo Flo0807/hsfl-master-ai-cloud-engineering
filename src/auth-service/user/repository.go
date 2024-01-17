@@ -4,6 +4,6 @@ import "github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/auth-service/pkg
 
 type Repository interface {
 	Migrate() error
-	FindUserByEmail(email string) (*model.DbUser, error)
+	FindUserByName(username string) (*model.DbUser, error)
 	CreateUser(user *model.DbUser) error
 }

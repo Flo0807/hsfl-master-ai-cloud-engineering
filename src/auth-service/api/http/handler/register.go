@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/auth-service/crypto"
@@ -11,7 +12,7 @@ import (
 )
 
 type registerRequest struct {
-	Email    string `json:"email"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -21,7 +22,7 @@ type RegisterHandler struct {
 }
 
 func (r *registerRequest) isValid() bool {
-	return r.Email != "" && r.Password != ""
+	return r.Username != "" && r.Password != ""
 }
 
 func NewRegisterHandler(
@@ -46,7 +47,7 @@ func (h *RegisterHandler) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err := h.userRepository.FindUserByEmail(request.Email)
+		_, err := h.userRepository.FindUserByName(request.Username)
 
 		if err != nil && err != sql.ErrNoRows {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -65,8 +66,10 @@ func (h *RegisterHandler) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		fmt.Print(hashedPw)
+
 		user := &model.DbUser{
-			Email:    request.Email,
+			Username: request.Username,
 			Password: hashedPw,
 		}
 

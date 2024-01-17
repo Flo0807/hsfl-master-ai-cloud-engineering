@@ -19,8 +19,8 @@ func TestJwtTokenGenerator(t *testing.T) {
 	t.Run("generate valid token", func(t *testing.T) {
 		// given
 		givenClaims := map[string]interface{}{
-			"sub":   123,
-			"email": "email@example.com",
+			"sub":      123,
+			"username": "user",
 		}
 
 		// when
@@ -40,7 +40,7 @@ func TestJwtTokenGenerator(t *testing.T) {
 		json.Unmarshal(b, &claims)
 
 		assert.Equal(t, float64(123), claims["sub"])
-		assert.Equal(t, "email@example.com", claims["email"])
+		assert.Equal(t, "user", claims["username"])
 	})
 
 	t.Run("validate valid token", func(t *testing.T) {

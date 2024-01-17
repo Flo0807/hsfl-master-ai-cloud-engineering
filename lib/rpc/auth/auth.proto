@@ -6,7 +6,7 @@ option go_package = "./rpc/auth";
 
 message User {
   uint64 id = 1;
-  string email = 2;
+  string username = 2;
 }
 
 service AuthService {

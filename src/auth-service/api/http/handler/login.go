@@ -12,7 +12,7 @@ import (
 )
 
 type loginRequest struct {
-	Email    string `json:"email"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -49,7 +49,7 @@ func (h *LoginHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.userRepository.FindUserByEmail(request.Email)
+	user, err := h.userRepository.FindUserByName(request.Username)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -74,9 +74,9 @@ func (h *LoginHandler) Login(w http.ResponseWriter, r *http.Request) {
 	expiration := time.Duration(3600) * time.Second
 
 	claims := map[string]interface{}{
-		"sub":   user.ID,
-		"email": user.Email,
-		"exp":   time.Now().Add(expiration).Unix(),
+		"sub":      user.ID,
+		"username": user.Username,
+		"exp":      time.Now().Add(expiration).Unix(),
 	}
 
 	token, err := h.jwtTokenGenerator.GenerateToken(claims)
@@ -94,5 +94,5 @@ func (h *LoginHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (r *loginRequest) isValid() bool {
-	return r.Email != "" && r.Password != ""
+	return r.Username != "" && r.Password != ""
 }

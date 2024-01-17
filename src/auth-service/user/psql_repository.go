@@ -26,7 +26,7 @@ func NewPsqlRepository(dbConfig database.PsqlConfig) (*PsqlRepository, error) {
 const createUserTable = `
 CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY,
-	email VARCHAR(255) UNIQUE NOT NULL,
+	username VARCHAR(255) UNIQUE NOT NULL,
 	password bytea NOT NULL
 );
 `
@@ -37,14 +37,14 @@ func (r *PsqlRepository) Migrate() error {
 	return err
 }
 
-const findUserByEmailQuery = `
-SELECT id, email, password FROM users WHERE email = $1;
+const findUserByNameQuery = `
+SELECT id, username, password FROM users WHERE username = $1;
 `
 
-func (r *PsqlRepository) FindUserByEmail(email string) (*model.DbUser, error) {
+func (r *PsqlRepository) FindUserByName(username string) (*model.DbUser, error) {
 	var user model.DbUser
 
-	err := r.db.QueryRow(findUserByEmailQuery, email).Scan(&user.ID, &user.Email, &user.Password)
+	err := r.db.QueryRow(findUserByNameQuery, username).Scan(&user.ID, &user.Username, &user.Password)
 
 	if err != nil {
 		return nil, err
@@ -54,11 +54,11 @@ func (r *PsqlRepository) FindUserByEmail(email string) (*model.DbUser, error) {
 }
 
 const createUserQuery = `
-INSERT INTO users (email, password) VALUES ($1, $2);
+INSERT INTO users (username, password) VALUES ($1, $2);
 `
 
 func (r *PsqlRepository) CreateUser(user *model.DbUser) error {
-	_, err := r.db.Exec(createUserQuery, user.Email, user.Password)
+	_, err := r.db.Exec(createUserQuery, user.Username, user.Password)
 
 	return err
 }
