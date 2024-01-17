@@ -17,13 +17,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// MockBulletinBoardServiceClient is a mock implementation of BulletinBoardServiceClient
 type MockBulletinBoardServiceClient struct{}
 
 func (m *MockBulletinBoardServiceClient) GetPosts(ctx context.Context, req *bulletin_board.Request, opts ...grpc.CallOption) (*bulletin_board.Feed, error) {
-	// Mocking response for testing purposes
 	post1CreatedAt := timestamppb.New(time.Now())
-	post2CreatedAt := timestamppb.New(time.Now().Add(-1 * time.Hour)) // one hour ago
+	post2CreatedAt := timestamppb.New(time.Now().Add(-1 * time.Hour))
 
 	return &bulletin_board.Feed{
 		Posts: []*bulletin_board.Post{
@@ -69,44 +67,35 @@ func TestDefaultController_GetFeed(t *testing.T) {
 
 	assert.Len(t, response.Posts, 2)
 
-	// Add more assertions based on the structure of your Post message
 	assert.Equal(t, "Post 1 Title", response.Posts[0].Title)
 	assert.Equal(t, "Post 1 Content", response.Posts[0].Content)
-	// Add similar assertions for other fields as needed
 }
 
 func TestDefaultController_GetFeed_ErrorFromClient(t *testing.T) {
-	// Setup
 	mockClient := &MockBulletinBoardServiceClient{}
 	ctrl := NewDefaultController(mockClient)
 
-	// Intentionally set the amount to a negative value to simulate an error from the client
 	req, err := http.NewRequest("GET", "/feed?amount=-1", nil)
 	assert.NoError(t, err)
 
 	w := httptest.NewRecorder()
 
-	// Test
 	ctrl.GetFeed(w, req)
-
-	// Assertions
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 
 	var errorResponse map[string]string
 	err = json.Unmarshal(w.Body.Bytes(), &errorResponse)
-	assert.NoError(t, err)
 
-	// Check if the "error" field exists in the response
+	assert.NoError(t, err)
 	assert.Contains(t, errorResponse, "error")
 
-	// Check the error message
 	expectedErrorMessage := "Internal Server Error"
 	assert.Equal(t, expectedErrorMessage, errorResponse["error"])
 }
 
 func TestDefaultController_GetHealth(t *testing.T) {
 	// Setup
-	ctrl := NewDefaultController(nil) // Pass a nil client for simplicity in health check
+	ctrl := NewDefaultController(nil)
 
 	req, err := http.NewRequest("GET", "/health", nil)
 	assert.NoError(t, err)
@@ -122,6 +111,9 @@ func TestDefaultController_GetHealth(t *testing.T) {
 }
 
 func TestIntegration(t *testing.T) {
+
+	//Setup and start containers to check if grpc connection can be established
+
 	postgres, err := containerhelpers.StartPostgres()
 	if err != nil {
 		t.Fatalf("could not start postgres container: %s", err.Error())

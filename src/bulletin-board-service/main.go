@@ -66,7 +66,6 @@ func main() {
 			log.Fatalf("error while listen and serve: %s", err.Error())
 		}
 	}()
-	//go func() {
 	log.Printf("Starting gRPC server on port %s", cfg.GrpcServerPort)
 
 	listener, err := net.Listen("tcp", ":"+cfg.GrpcServerPort)
@@ -80,5 +79,4 @@ func main() {
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err.Error())
 	}
-	//}()
 }

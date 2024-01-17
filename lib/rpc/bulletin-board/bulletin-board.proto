@@ -3,9 +3,6 @@ package bulletin_board;
 import "google/protobuf/timestamp.proto";
 option go_package = "./rpc/bulletin_board";
 
-
-
-
 service BulletinBoardService {
     rpc getPosts(Request) returns (Feed);
 }

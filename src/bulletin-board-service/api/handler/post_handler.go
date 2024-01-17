@@ -14,19 +14,16 @@ import (
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 )
 
-// PostHandler handles HTTP requests for Post
 type PostHandler struct {
 	PostService service.PostService
 	g           *singleflight.Group
 }
 
-// NewPostHandler creates a new PostHandler
 func NewPostHandler(service service.PostService) *PostHandler {
 	g := &singleflight.Group{}
 	return &PostHandler{service, g}
 }
 
-// CreatePost handles the creation of a new post
 func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	var post models.Post
 	decoder := json.NewDecoder(r.Body)
@@ -46,15 +43,13 @@ func (h *PostHandler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, post)
 }
 
-// GetPosts handles the retrieval of all posts
 func (h *PostHandler) GetPosts(w http.ResponseWriter, r *http.Request) {
-	take := int64(10) // Standardwert für Anzahl der Datensätze pro Seite als uint
-	page := int64(1)  // Standardwert für die aktuelle Seite als uint
+	take := int64(10) // Stadardwerte
+	page := int64(1)
 
 	takeParam := r.FormValue("take")
 	pageParam := r.FormValue("page")
 
-	// Überprüfen und Parsen der optionalen Parameter
 	if takeParam != "" {
 		takeValue, err := strconv.ParseInt(takeParam, 10, 0)
 		if err == nil {
@@ -69,17 +64,15 @@ func (h *PostHandler) GetPosts(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Berechnung des Datensatz-Offsets basierend auf der aktuellen Seite
 	skip := (page - 1) * take
 
-	// Verwende `take` und `skip` in deinem Service, um die Daten zu paginieren
 	postPage := h.PostService.GetAll(take, skip)
 	respondWithJSON(w, http.StatusOK, postPage)
 }
 
 func (h *PostHandler) GetPostsRequestCoalescing(w http.ResponseWriter, r *http.Request) {
-	take := int64(10) // default value for number of records per page as uint
-	page := int64(1)  // default value for current page as uint
+	take := int64(10)
+	page := int64(1)
 
 	takeParam := r.FormValue("take")
 	pageParam := r.FormValue("page")
@@ -114,7 +107,6 @@ func (h *PostHandler) GetPostsRequestCoalescing(w http.ResponseWriter, r *http.R
 	respondWithJSON(w, http.StatusOK, msg.(repository.PostPage))
 }
 
-// GetPost handles the retrieval of a post by ID
 func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	idString := r.Context().Value("id").(string)
 	id := convertToUint(idString)
@@ -139,7 +131,6 @@ func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, post)
 }
 
-// UpdatePost handles the update of a post by ID
 func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	idString := r.Context().Value("id").(string)
 	id := convertToUint(idString)
@@ -169,7 +160,6 @@ func (h *PostHandler) UpdatePost(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, post)
 }
 
-// DeletePost handles the deletion of a post by ID
 func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	idString := r.Context().Value("id").(string)
 	id := convertToUint(idString)
@@ -184,7 +174,6 @@ func (h *PostHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-// Helper function to respond with JSON
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
@@ -200,14 +189,11 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	}
 }
 
-// Helper function to respond with an error message
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
 
-// Helper function to convert string to uint
 func convertToUint(s string) uint {
-	// Add proper error handling based on your requirements
 	result, _ := strconv.ParseUint(s, 10, 64)
 	return uint(result)
 }

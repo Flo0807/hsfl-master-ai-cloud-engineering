@@ -29,52 +29,41 @@ func NewPostPage(currentPage, pageSize, totalRecords, totalPages uint, records [
 	}
 }
 
-// PostPsqlRepository handles database operations for Post
 type PostPsqlRepository struct {
 	DB *gorm.DB
 }
 
-// NewPostPsqlRepository creates a new PostPsqlRepository
 func NewPostPsqlRepository(db *gorm.DB) *PostPsqlRepository {
 	return &PostPsqlRepository{DB: db}
 }
 
-// Create a new post
 func (r *PostPsqlRepository) Create(post *models.Post) {
 	r.DB.Create(post)
 }
 
-// FindAll posts
 func (r *PostPsqlRepository) FindAll(take int64, skip int64) PostPage {
 	var posts []models.Post
 	var totalRecords int64
 
-	// Ermittle die Gesamtzahl der Datensätze
 	r.DB.Model(&models.Post{}).Count(&totalRecords)
 
-	// Abfrage der Datensätze mit Paginierung
 	r.DB.Limit(int(take)).Offset(int(skip)).Find(&posts)
 
-	// Berechnung der Anzahl der Seiten
 	totalPages := (totalRecords + take - 1) / take
 
-	// Erstelle ein Page-Objekt, um die paginierten Daten und Metadaten zurückzugeben
 	return NewPostPage(uint(skip/take)+1, uint(take), uint(totalRecords), uint(totalPages), posts)
 }
 
-// FindByID finds a post by ID
 func (r *PostPsqlRepository) FindByID(id uint) models.Post {
 	var post models.Post
 	r.DB.First(&post, id)
 	return post
 }
 
-// Update a post
 func (r *PostPsqlRepository) Update(post *models.Post) {
 	r.DB.Save(post)
 }
 
-// Delete a post
 func (r *PostPsqlRepository) Delete(post *models.Post) {
 	r.DB.Delete(post)
 }

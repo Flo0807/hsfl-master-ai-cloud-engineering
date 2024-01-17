@@ -21,12 +21,9 @@ type ReverseProxyHandler struct {
 	Services []Service
 }
 
-// ReverseProxyConfig represents the configuration for the Reverse Proxy.
 type ReverseProxyConfig struct {
 	Services []Service
 }
-
-// ReverseProxyHandler is a struct representing the Reverse Proxy.
 
 func newSingleHostReverseProxy(targetURL string) *httputil.ReverseProxy {
 	target, _ := url.Parse(targetURL)

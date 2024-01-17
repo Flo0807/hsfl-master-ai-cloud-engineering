@@ -20,11 +20,9 @@ func NewDefaultController(bulletinBoardClient bulletin_board.BulletinBoardServic
 
 func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
 
-	amount := int64(5) // Standardwert für Anzahl der Posts
-
+	amount := int64(5)
 	amountParam := r.FormValue("amount")
 
-	// Überprüfen und Parsen des optionalen Post Amounts
 	if amountParam != "" {
 		amountValue, err := strconv.ParseInt(amountParam, 10, 0)
 		if err == nil {
@@ -33,18 +31,23 @@ func (ctrl *DefaultController) GetFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp, err := ctrl.client.GetPosts(r.Context(), &bulletin_board.Request{Amount: 10})
+
 	if err != nil || amount <= 0 {
 		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
+
 	posts := resp.Posts
+
 	if !(amount >= int64(len(resp.Posts))) {
 		posts = resp.Posts[:amount]
 
 	}
+
 	feed := bulletin_board.Feed{
 		Posts: posts,
 	}
+
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
@@ -72,7 +75,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	}
 }
 
-// Helper function to respond with an error message
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
