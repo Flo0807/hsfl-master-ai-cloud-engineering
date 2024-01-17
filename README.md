@@ -70,7 +70,7 @@ The default api gateway config uses the following paths to route requests to the
 
 ### Example Data
 
-The database is automatically populated with example data when the application is started for the first time. We provide two sql files located in the `scripts` directory. The `create.sql` file creates the database and the tables. The `insert.sql` file inserts example data into the database.
+When started via docker-compose the database is automatically populated with example data when the application is started for the first time. We provide two sql files located in the `scripts` directory. The `create.sql` file creates the database and the tables. The `insert.sql` file inserts example data into the database.
 
 An example user is created with the following credentials:
 
@@ -82,7 +82,7 @@ Along with some example posts.
 
 ## Kubernetes Setup
 
-TODO
+See [Kubernetes Setup](/k8s/README.md) for instructions on how to deploy the application to a Kubernetes cluster and how to import example data.
 
 ## Authors
 

@@ -1,9 +1,8 @@
 # Deployment
 
-
 ## Prerequisites
 
-Make sure secrets are created before deploying the application.
+Make sure secrets are created before deploying the application. When running the application on minikube, make sure to start minikube before creating the secrets.
 
 Create private and public key for JWT authentication:
 ```
@@ -92,6 +91,30 @@ proxy-ingress   nginx   *       192.168.49.2   80      13m
 ```
 
 Access the application at `http://<ingress-ip>:80`.
+
+## Import test data
+
+We provide two sql files located in the `scripts` directory. The `01-create.sql` file creates the database and the tables. The `insert.sql` file inserts example data into the database.
+
+You can use the following commands to create test data:
+
+Create tables:
+
+```
+cat scripts/data/01-create.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+```
+
+Import test data:
+
+```
+cat scripts/data/02-insert.sql | kubectl exec -i $(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep postgres) -- psql -U admin -d board-hub password
+```
+
+You can now log in with the following credentials:
+
+| Username | Password |
+| -------- | -------- |
+| test     | test     |
 
 ## Monitoring
 
