@@ -124,3 +124,13 @@ To import the dashboard:
 
 The dashboard should now be available under `Dashboards` -> `Board Hub Monitoring Dashboard`.
 
+### Alerts
+
+The monitoring stack is set up with two alerts:
+
+CPU Alerts under `Resource Alerts > CPU Alerts`
+RAM Alerts under `Resource Alerts > RAM Alerts`
+The CPU alert activates when the overall CPU usage surpasses 70% for a continuous period of 30 seconds, while the RAM alert triggers when the overall memory usage exceeds 70% for 30 seconds.
+If an alert is triggerd, it shows up in the `Alerts` tab of the dashboard.
+
+Provisioning for both alerts is done through alerting config map defined through the `k8s/manifests/monitoring/grafana/alerting.yaml` file.
