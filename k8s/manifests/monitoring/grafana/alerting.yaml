@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+data:
+  provisioning.yaml: |
+    templates:
+      - name: alert-rules-1705483771882
+        template: 
+          apiVersion: 1
+          groups:
+            - orgId: 1
+              name: CPU Alerts
+              folder: Resource Alerts
+              interval: 30s
+              rules:
+                - uid: dedf64c6-b89f-4468-ab8e-f13431764123
+                  title: Real CPU Usage
+                  condition: C
+                  data:
+                    - refId: A
+                      relativeTimeRange:
+                        from: 900
+                        to: 0
+                      datasourceUid: P1809F7CD0C75ACF3
+                      model:
+                        datasource:
+                          type: prometheus
+                          uid: P1809F7CD0C75ACF3
+                        editorMode: code
+                        exemplar: false
+                        expr: avg(1-rate(node_cpu_seconds_total{mode="idle", job="node-exporter"}[15s]))
+                        format: time_series
+                        instant: false
+                        interval: ""
+                        intervalMs: 15000
+                        legendFormat: Real
+                        maxDataPoints: 43200
+                        range: true
+                        refId: A
+                    - refId: B
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
+                        datasource:
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: B
+                        settings:
+                          mode: dropNN
+                        type: reduce
+                    - refId: C
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0.7
+                                - 0
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params: []
+                            reducer:
+                              params: []
+                              type: avg
+                            type: query
+                        datasource:
+                          name: Expression
+                          type: __expr__
+                          uid: __expr__
+                        expression: B
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: C
+                        type: threshold
+                  dashboardUid: a98fd2df-6521-446c-bcda-b2ae3861b431
+                  panelId: 35
+                  noDataState: OK
+                  execErrState: Error
+                  for: 5m
+                  annotations:
+                    __dashboardUid__: a98fd2df-6521-446c-bcda-b2ae3861b431
+                    __panelId__: "35"
+                  labels: {}
+                  isPaused: false
+            - orgId: 1
+              name: RAM Alerts
+              folder: Resource Alerts
+              interval: 30s
+              rules:
+                - uid: c0148aba-9d5a-4a07-a377-b1f1511cd296
+                  title: Real Ram Usage
+                  condition: C
+                  data:
+                    - refId: A
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: P1809F7CD0C75ACF3
+                      model:
+                        editorMode: code
+                        expr: sum(node_memory_MemTotal_bytes{job="node-exporter"} - node_memory_MemAvailable_bytes{job="node-exporter"}) / sum(node_memory_MemTotal_bytes{job="node-exporter"})
+                        instant: false
+                        intervalMs: 1000
+                        legendFormat: __auto
+                        maxDataPoints: 43200
+                        range: true
+                        refId: A
+                    - refId: B
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params: []
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - B
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: A
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        reducer: last
+                        refId: B
+                        settings:
+                          mode: dropNN
+                        type: reduce
+                    - refId: C
+                      relativeTimeRange:
+                        from: 600
+                        to: 0
+                      datasourceUid: __expr__
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 0.7
+                              type: gt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - C
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        datasource:
+                          type: __expr__
+                          uid: __expr__
+                        expression: B
+                        intervalMs: 1000
+                        maxDataPoints: 43200
+                        refId: C
+                        type: threshold
+                  noDataState: OK
+                  execErrState: Error
+                  for: 5m
+                  annotations: {}
+                  labels: {}
+                  isPaused: false

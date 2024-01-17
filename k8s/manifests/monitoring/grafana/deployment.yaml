@@ -33,6 +33,9 @@ spec:
           - mountPath: /etc/grafana/provisioning/datasources
             name: grafana-datasources
             readOnly: false
+          - mountPath: /etc/grafana/provisioning/alerting
+            name: grafana-alerting
+            readOnly: false
       volumes:
         - name: grafana-storage
           emptyDir: {}
@@ -40,3 +43,7 @@ spec:
           configMap:
               defaultMode: 420
               name: grafana-datasources
+        - name: grafana-alerting
+          configMap:
+              defaultMode: 420
+              name: grafana-alerting
