@@ -9,7 +9,7 @@ import (
 
 func StartBulletinService(dbHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
-		Image:        "hsfl-master-ai-cloud-engineering-bulletin-board-service",
+		Image:        "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service:main",
 		ExposedPorts: []string{"3000", "50052"},
 		Env: map[string]string{
 			"HTTP_SERVER_PORT":      "3000",

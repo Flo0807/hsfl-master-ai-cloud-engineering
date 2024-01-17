@@ -10,7 +10,7 @@ import (
 
 func StartFeedService(bulletinBoardHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
-		Image:        "hsfl-master-ai-cloud-engineering-feed-service",
+		Image:        "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/feed-service:main",
 		ExposedPorts: []string{"3000"},
 		Env: map[string]string{
 			"HTTP_SERVER_PORT":                "3000",
