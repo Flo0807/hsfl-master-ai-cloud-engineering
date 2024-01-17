@@ -64,9 +64,9 @@ Deploy the application:
 kubectl apply -f k8s/manifests --recursive
 ```
 
-Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/))
+Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/)) You can then access the application at [http://localhost:80](http://localhost:80).
 
-You can now access the application at [http://localhost:80](http://localhost:80).
+Otherwise, run `minikube ip` to get the ingress IP address or use [`kubectl get ingress`](#kubectl-get-ingress).
 
 ## Deploy on other Kubernetes Cluster
 
@@ -79,6 +79,8 @@ Deploy the application:
 ```
 kubectl apply -f k8s/manifests --recursive
 ```
+
+<a id="kubectl-get-ingress"></a>
 
 Run `kubectl get ingress` to get the ingress IP address.
 
@@ -135,6 +137,7 @@ Last section displays metrics coupled to the namespace and node. In the same man
 
 
 <a id="monitoring-setup"></a>
+
 ### Setup
 #### Access grafana
 
