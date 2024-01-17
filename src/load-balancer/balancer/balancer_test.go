@@ -26,7 +26,7 @@ func TestNewBalancer(t *testing.T) {
 	targets := []model.Target{{}, {}, {}}
 
 	// when
-	b := NewBalancer(a, targets, 10)
+	b := NewBalancer(a, targets, 10, "/health")
 
 	// test
 	assert.Equal(t, a, b.algorithm)
@@ -42,7 +42,7 @@ func TestServeHTTP(t *testing.T) {
 	targets := []model.Target{{Url: targetURL}, {}, {}}
 
 	// when
-	b := NewBalancer(a, targets, 10)
+	b := NewBalancer(a, targets, 10, "/health")
 	req := httptest.NewRequest("GET", "http://localhost:8080", nil)
 	w := httptest.NewRecorder()
 
@@ -60,7 +60,7 @@ func TestHealthCheck(t *testing.T) {
 
 	targetURL, _ := url.Parse(server.URL)
 	targets := []model.Target{{Url: targetURL}}
-	b := NewBalancer(&mockAlgorithm{}, targets, 1)
+	b := NewBalancer(&mockAlgorithm{}, targets, 1, "/health")
 
 	time.Sleep(2 * time.Second)
 

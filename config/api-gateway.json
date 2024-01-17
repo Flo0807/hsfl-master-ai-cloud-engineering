@@ -1,0 +1,24 @@
+{
+    "services": [
+        {
+            "name": "frontend",
+            "contextPath": "/",
+            "targetURL": "http://web-service:3000"
+        },
+        {
+            "name": "auth",
+            "contextPath": "/auth",
+            "targetURL": "http://auth-service:3000"
+        },
+        {
+            "name": "bulletin-board",
+            "contextPath": "/bulletin-board",
+            "targetURL": "http://bulletin-board-service:3000"
+        },
+        {
+            "name": "feed",
+            "contextPath": "/feed",
+            "targetURL": "http://feed-service:3000"
+        }
+    ]
+}

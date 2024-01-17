@@ -15,10 +15,11 @@ type Balancer struct {
 	targets             []model.Target
 	healthyTargets      []model.Target
 	healthCheckInterval int
+	healthCheckPath     string
 }
 
-func NewBalancer(algorithm algorithm.Algorithm, targets []model.Target, healthCheckInterval int) *Balancer {
-	b := &Balancer{algorithm: algorithm, targets: targets, healthyTargets: targets, healthCheckInterval: healthCheckInterval}
+func NewBalancer(algorithm algorithm.Algorithm, targets []model.Target, healthCheckInterval int, healthCheckPath string) *Balancer {
+	b := &Balancer{algorithm: algorithm, targets: targets, healthyTargets: targets, healthCheckInterval: healthCheckInterval, healthCheckPath: healthCheckPath}
 	go b.healthCheck()
 	return b
 }
@@ -36,7 +37,7 @@ func (b *Balancer) healthCheck() {
 				continue
 			}
 
-			resp, err := http.Get(target.Url.String() + "/health")
+			resp, err := http.Get(target.Url.String() + b.healthCheckPath)
 			if err != nil || resp.StatusCode != http.StatusOK {
 				// Remove from healthyTargets if it's there
 				for j, healthyTarget := range b.healthyTargets {

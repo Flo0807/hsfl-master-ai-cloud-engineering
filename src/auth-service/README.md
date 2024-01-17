@@ -18,6 +18,8 @@ The auth service uses a ECDSA private key to sign JWTs. The key can be generated
 ssh-keygen -t ecdsa -f /path/to/key -m pem
 ```
 
+Make sure to set the `JWT_PRIVATE_KEY` environment variable to the path of the generated key.
+
 Create an `.env` file and adjust the values to your needs. See config section for more information.
 
 ## Run

@@ -10,6 +10,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/mock v0.4.0
+	golang.org/x/sync v0.6.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
 	gorm.io/driver/postgres v1.5.4
@@ -33,7 +34,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231002182017-d307bd883b97 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gotest.tools/v3 v3.5.1 // indirect
 )
 
 replace github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib => ../../lib

@@ -2,10 +2,14 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/service"
+	"golang.org/x/sync/singleflight"
 
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
 )
@@ -13,11 +17,13 @@ import (
 // PostHandler handles HTTP requests for Post
 type PostHandler struct {
 	PostService service.PostService
+	g           *singleflight.Group
 }
 
 // NewPostHandler creates a new PostHandler
 func NewPostHandler(service service.PostService) *PostHandler {
-	return &PostHandler{PostService: service}
+	g := &singleflight.Group{}
+	return &PostHandler{service, g}
 }
 
 // CreatePost handles the creation of a new post
@@ -71,11 +77,61 @@ func (h *PostHandler) GetPosts(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, postPage)
 }
 
+func (h *PostHandler) GetPostsRequestCoalescing(w http.ResponseWriter, r *http.Request) {
+	take := int64(10) // default value for number of records per page as uint
+	page := int64(1)  // default value for current page as uint
+
+	takeParam := r.FormValue("take")
+	pageParam := r.FormValue("page")
+
+	if takeParam != "" {
+		takeValue, err := strconv.ParseInt(takeParam, 10, 0)
+		if err == nil {
+			take = takeValue
+		}
+	}
+
+	if pageParam != "" {
+		pageValue, err := strconv.ParseInt(pageParam, 10, 0)
+		if err == nil {
+			page = pageValue
+		}
+	}
+
+	skip := (page - 1) * take
+
+	msg, err, _ := h.g.Do(fmt.Sprint(take, skip), func() (interface{}, error) {
+		postPage := h.PostService.GetAll(take, skip)
+
+		return postPage, nil
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, msg.(repository.PostPage))
+}
+
 // GetPost handles the retrieval of a post by ID
 func (h *PostHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	idString := r.Context().Value("id").(string)
 	id := convertToUint(idString)
-	post := h.PostService.GetByID(id)
+
+	msg, err, _ := h.g.Do(idString, func() (interface{}, error) {
+		post := h.PostService.GetByID(id)
+
+		return post, nil
+	})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	post := msg.(models.Post)
+
 	if post.ID == 0 {
 		respondWithError(w, http.StatusNotFound, "Post not found")
 		return
