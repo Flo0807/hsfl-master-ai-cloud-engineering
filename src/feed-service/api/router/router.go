@@ -5,7 +5,7 @@ import (
 
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/router"
 
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/feed"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/feed-service/feed"
 )
 
 type Router struct {

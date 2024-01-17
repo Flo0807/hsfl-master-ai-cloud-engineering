@@ -1,9 +1,18 @@
 package models
 
 import (
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
+	"time"
 )
 
 type Feed struct {
-	Posts []models.Post `json:"posts"`
+	Posts []Post `json:"posts"`
+}
+type Post struct {
+	ID        uint       `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `sql:"index"`
+
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }

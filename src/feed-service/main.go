@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/feed-service/api/router"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/feed-service/config"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/feed-service/feed"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/api/router"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/config"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/src/feed-service/feed"
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"

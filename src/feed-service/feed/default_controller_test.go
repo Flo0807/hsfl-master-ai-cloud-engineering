@@ -3,12 +3,15 @@ package feed
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/containerhelpers"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/lib/rpc/bulletin-board/rpc/bulletin_board"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -116,4 +119,44 @@ func TestDefaultController_GetHealth(t *testing.T) {
 	// Assertions
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Empty(t, w.Body.String(), "Expected an empty response body for health check")
+}
+
+func TestIntegration(t *testing.T) {
+	postgres, err := containerhelpers.StartPostgres()
+	if err != nil {
+		t.Fatalf("could not start postgres container: %s", err.Error())
+	}
+	fmt.Println(postgres.GetContainerID())
+
+	authService, err := containerhelpers.StartAuthService()
+	if err != nil {
+		t.Fatalf("could not start postgres container: %s", err.Error())
+	}
+	fmt.Println(authService.GetContainerID())
+
+	bulletinContainer, err := containerhelpers.StartBulletinService()
+	if err != nil {
+		t.Fatalf("could not start postgres container: %s", err.Error())
+	}
+	fmt.Println(bulletinContainer.GetContainerID())
+
+	gateway, err := containerhelpers.StartGatewayService()
+	if err != nil {
+		t.Fatalf("could not start postgres container: %s", err.Error())
+	}
+	fmt.Println(gateway.GetContainerID())
+	feedContainer, err := containerhelpers.StartFeedService()
+	if err != nil {
+		t.Fatalf("could not start postgres container: %s", err.Error())
+	}
+	fmt.Println(feedContainer.GetContainerID())
+
+	endpoint, err := gateway.Endpoint(context.Background(), "")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(endpoint)
+	req, err := http.NewRequest("GET", "http://"+endpoint+"/feed/healh", nil)
+	assert.NoError(t, err)
+	fmt.Println(req.Response.Status)
 }
