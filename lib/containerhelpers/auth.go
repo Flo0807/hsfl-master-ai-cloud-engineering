@@ -10,7 +10,7 @@ import (
 func StartAuthService(dbHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        "hsfl-master-ai-cloud-engineering-auth-service",
-		ExposedPorts: []string{"3000"},
+		ExposedPorts: []string{"3000", "50051"},
 		Env: map[string]string{
 			"HTTP_SERVER_PORT": "3000",
 			"GRPC_SERVER_PORT": "50051",

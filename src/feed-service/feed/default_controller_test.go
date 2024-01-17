@@ -146,12 +146,6 @@ func TestIntegration(t *testing.T) {
 	}
 	fmt.Println(bulletinContainer.GetContainerID())
 
-	// gateway, err := containerhelpers.StartGatewayService()
-	// if err != nil {
-	// 	t.Fatalf("could not start gateway container: %s", err.Error())
-	// }
-	// fmt.Println(gateway.GetContainerID())
-
 	bulletinBoardIp, err := bulletinContainer.ContainerIP(context.Background())
 
 	if err != nil {
@@ -170,18 +164,11 @@ func TestIntegration(t *testing.T) {
 		t.Fatalf("could not get feed container ip: %s", err.Error())
 	}
 
-	feedUrl := fmt.Sprintf("http://%s:%s/feed/health", feedIp, "3000")
+	feedUrl := fmt.Sprintf("http://%s:%s/feed/feed?amount=1", feedIp, "3000")
 
 	resp, err := http.Get(feedUrl)
 
-	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.NoError(t, err)
 
-	// endpoint, err := gateway.Endpoint(context.Background(), "")
-	// if err != nil {
-	// 	t.Error(err)
-	// }
-	// fmt.Println(endpoint)
-	// req, err := http.NewRequest("GET", "http://"+endpoint+"/feed/healh", nil)
-	// assert.NoError(t, err)
 }
