@@ -69,9 +69,9 @@ spec:
               readOnly: true
           resources:
             limits:
-              cpu: 500m
+              cpu: 250m
             requests:
-              cpu: 200m
+              cpu: 100m
       volumes:
         - name: jwt-volume
           secret:
@@ -97,4 +97,4 @@ spec:
         container: auth-service
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 80

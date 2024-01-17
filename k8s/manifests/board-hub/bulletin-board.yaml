@@ -57,9 +57,9 @@ spec:
               value: "board-hub"
           resources:
             limits:
-              cpu: 500m
+              cpu: 250m
             requests:
-              cpu: 200m
+              cpu: 100m
 ---
 apiVersion: "autoscaling/v2"
 kind: "HorizontalPodAutoscaler"
@@ -81,4 +81,4 @@ spec:
         container: bulletin-board-service
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 80
