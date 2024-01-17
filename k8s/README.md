@@ -71,7 +71,9 @@ You can now access the application at [http://localhost:80](http://localhost:80)
 
 ## Deploy on other Kubernetes Cluster
 
-Make sure you have a working Kubernetes cluster with an ingress controller running. See https://spacelift.io/blog/kubernetes-ingress on how to set up an ingress controller. In addition, make sure all secrets are created.
+> Note: Make sure you have a working Kubernetes cluster with an ingress controller running. See https://spacelift.io/blog/kubernetes-ingress on how to set up an ingress controller. In addition, make sure all secrets are created.
+
+> Note: Make sure you have read the [metrics-server](#metrics-server) section before continuing.
 
 Deploy the application:
 
