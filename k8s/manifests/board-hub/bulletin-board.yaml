@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bulletin-board-service
+spec:
+  selector:
+    app: bulletin-board-service
+    tier: backend
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulletin-board-deployment
+  labels:
+    app: bulletin-board-service
+spec:
+  selector:
+    matchLabels:
+      app: bulletin-board-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bulletin-board-service
+        tier: backend
+    spec:
+      containers:
+        - name: bulletin-board-service
+          image: "ghcr.io/flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service:main"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3002
+          env:
+            - name: HTTP_SERVER_PORT
+              value: "3002"
+            - name: AUTH_SERVICE_URL_GRPC
+              value: "auth-service.default.svc.cluster.local:3011"
+            - name: DB_HOST
+              value: "postgres-service.default.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-password
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              value: "board-hub"
+          resources:
+            limits:
+              cpu: 250m
+            requests:
+              cpu: 100m
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: bulletin-board-deployment
+  labels:
+    app: bulletin-board-service
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: bulletin-board-deployment
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: bulletin-board-service
+        target:
+          type: Utilization
+          averageUtilization: 80

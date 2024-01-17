@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-cm
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: 'board-hub'
+  POSTGRES_USER: 'admin'
+  # POSTGRES_PASSWORD: 'password'
+  # Password is defined as secret 'postgres-password'
