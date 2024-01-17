@@ -4,7 +4,7 @@ The feed service is responsible for managing feeds. It provides a REST API to fe
 
 ## Prequisites
 
-Create an `.env` file and adjust the values to your needs. See config section for more information.
+Create an `.env` file and adjust the values to your needs. See config section for more information. Make sure the bulletin board service is running.
 
 ## Run
 
@@ -21,5 +21,6 @@ Config values are set via environment variables. The following environment varia
 | Name | Description | Default |
 | ---- | ----------- | -------- |
 | HTTP_SERVER_PORT | Port the http server listens on | 3000 |
+| BULLETIN_BOARD_SERVICE_URL_GRPC | URL of the bulletin board service gRPC endpoint | - |
 
 You may also use a `.env` file to set environment variables. See `.env.example` for an example.

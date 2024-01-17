@@ -61,15 +61,15 @@
 </template>
 
 <script setup lang="ts">
-import CreateBulletinDialog from "components/bulletin-board/CreateBulletinDialog.vue";
-import {DateTime} from "luxon";
+import CreateBulletinDialog from 'components/bulletin-board/CreateBulletinDialog.vue';
+import {DateTime} from 'luxon';
 
-import {onMounted, ref} from "vue";
-import {BulletinBoardEntry} from "components/models";
-import DisplayBulletinDialog from "components/bulletin-board/DisplayBulletinDialog.vue";
-import {useBulletinStore} from "stores/bulletin-store";
-import EditBulletinDialog from "components/bulletin-board/EditBulletinDialog.vue";
-import {useQuasar} from "quasar";
+import {onMounted, ref} from 'vue';
+import {BulletinBoardEntry} from 'components/models';
+import DisplayBulletinDialog from 'components/bulletin-board/DisplayBulletinDialog.vue';
+import {useBulletinStore} from 'stores/bulletin-store';
+import EditBulletinDialog from 'components/bulletin-board/EditBulletinDialog.vue';
+import {useQuasar} from 'quasar';
 
 const $q = useQuasar()
 const bulletinStore = useBulletinStore()

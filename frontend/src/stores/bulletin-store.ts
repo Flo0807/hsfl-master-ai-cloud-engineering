@@ -1,6 +1,6 @@
-import {defineStore} from "pinia";
-import BulletinBoardService from "src/service/BulletinBoardService";
-import {BulletinBoardEntry} from "components/models";
+import {defineStore} from 'pinia';
+import BulletinBoardService from 'src/service/BulletinBoardService';
+import {BulletinBoardEntry} from 'components/models';
 
 export const useBulletinStore = defineStore('bulletin', {
   state: () => ({

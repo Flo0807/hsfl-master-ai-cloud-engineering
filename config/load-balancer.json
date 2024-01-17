@@ -1,0 +1,8 @@
+{
+    "image": "docker.io/yeasy/simple-web",
+    "networkName": "bulletinboard",
+    "replicas": 3,
+    "healthCheckIntervalSeconds": 5,
+    "healthCheckPath": "/",
+    "port": 80
+}

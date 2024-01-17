@@ -1,5 +1,5 @@
-import {BulletinBoardEntry, ResponsePage} from "components/models";
-import {api} from "boot/axios";
+import {BulletinBoardEntry, ResponsePage} from 'components/models';
+import {api} from 'boot/axios';
 
 const bulletinBoardApi = '/bulletin-board/posts';
 export default {

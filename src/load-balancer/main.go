@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -16,7 +17,6 @@ import (
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/load-balancer/config"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/load-balancer/docker_helper"
 	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/load-balancer/model"
-	"github.com/caarlos0/env/v10"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/joho/godotenv"
@@ -25,10 +25,13 @@ import (
 func main() {
 	godotenv.Load()
 
-	cfg := config.Config{}
+	configPath := flag.String("config", "./config.json", "Path to the configuration file")
+	flag.Parse()
 
-	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("error while parsing enviroment variables: %s", err.Error())
+	cfg, err := config.LoadConfig(*configPath)
+
+	if err != nil {
+		log.Fatal("Error loading config file: ", err)
 	}
 
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -51,12 +54,12 @@ func main() {
 	containerIds := docker_helper.StartContainers(cli, cfg.Image, cfg.NetworkName, cfg.Replicas)
 	defer docker_helper.RemoveContainers(cli, containerIds)
 
-	targets, err := GetTargets(cli, cfg.NetworkName, containerIds)
+	targets, err := GetTargets(cli, cfg.NetworkName, containerIds, cfg.Port)
 	if err != nil {
 		panic(err)
 	}
 
-	loadBalancer := balancer.NewBalancer(round_robin.New(), targets, cfg.HealthCheckIntervalSeconds)
+	loadBalancer := balancer.NewBalancer(round_robin.New(), targets, cfg.HealthCheckIntervalSeconds, cfg.HealthCheckPath)
 
 	log.Println("Starting HTTP server on port", cfg.HttpServerPort)
 	server := &http.Server{
@@ -75,7 +78,7 @@ func main() {
 	server.ListenAndServe()
 }
 
-func GetTargets(cli *client.Client, networkName string, containerIDs []string) ([]model.Target, error) {
+func GetTargets(cli *client.Client, networkName string, containerIDs []string, port int) ([]model.Target, error) {
 	targets := make([]model.Target, len(containerIDs))
 
 	for i, containerID := range containerIDs {
@@ -86,7 +89,7 @@ func GetTargets(cli *client.Client, networkName string, containerIDs []string) (
 
 		ip := containerJson.NetworkSettings.Networks[networkName].IPAddress
 
-		urlStr := fmt.Sprintf("http://%s:%s", ip, "80")
+		urlStr := fmt.Sprintf("http://%s:%d", ip, port)
 
 		targetUrl, err := url.Parse(urlStr)
 		if err != nil {

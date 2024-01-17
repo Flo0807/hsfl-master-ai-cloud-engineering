@@ -31,6 +31,7 @@ Config values are set via environment variables. The following environment varia
 | Name | Description | Default |
 | ---- | ----------- | -------- |
 | HTTP_SERVER_PORT | Port the http server listens on | 3000 |
+| GRPC_SERVER_PORT | Port the gRPC server listens on | 50051 |
 | AUTH_SERVICE_URL_GRPC | URL of the authentication service gRPC endpoint | - |
 | DB_HOST | Hostname of PostgreSQL database | - |
 | DB_PORT | Port of PostgreSQL database | - |

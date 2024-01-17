@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive} from "vue";
-import {BulletinBoardEntry} from "components/models";
+import {computed, reactive} from 'vue';
+import {BulletinBoardEntry} from 'components/models';
 
 const props = defineProps({
   visible: {

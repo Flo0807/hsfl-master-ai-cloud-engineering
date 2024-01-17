@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	mocks "github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/_mocks"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
-	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
-	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	mocks "github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/_mocks"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/models"
+	"github.com/Flo0807/hsfl-master-ai-cloud-engineering/bulletin-board-service/repository"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCreatePost(t *testing.T) {
@@ -92,6 +93,38 @@ func TestGetPosts(t *testing.T) {
 
 		// Test
 		handler.GetPosts(w, req)
+
+		// Assertions
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+}
+
+func TestGetPostsRequestCoalescing(t *testing.T) {
+	// Setup
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockService := mocks.NewMockPostService(ctrl)
+	handler := NewPostHandler(mockService)
+
+	t.Run("should return 200 OK with list of posts", func(t *testing.T) {
+		// Setup
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/posts?take=10&page=1", nil)
+
+		// Expectations
+		mockService.EXPECT().GetAll(int64(10), int64(0)).Return(repository.PostPage{
+			Page: repository.Page{
+				CurrentPage:  1,
+				PageSize:     10,
+				TotalRecords: 0,
+				TotalPages:   0,
+			},
+			Records: []models.Post{},
+		})
+
+		// Test
+		handler.GetPostsRequestCoalescing(w, req)
 
 		// Assertions
 		assert.Equal(t, http.StatusOK, w.Code)

@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import {BulletinBoardEntry} from "components/models";
-import {computed, PropType} from "vue";
+import {BulletinBoardEntry} from 'components/models';
+import {computed, PropType} from 'vue';
 
 const props = defineProps({
   item: {
