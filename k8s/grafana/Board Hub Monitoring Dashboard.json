@@ -835,7 +835,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -872,14 +873,14 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (instance) (rate(node_network_receive_bytes_total{kubernetes_name=\"\",device!=\"lo\"}[10s]))",
+          "expr": "sum by (instance) (rate(node_network_receive_bytes_total{kubernetes_name=\"\",device!=\"lo\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Rx (10s) bytes/s",
+      "title": "Rx bytes/s",
       "type": "timeseries"
     },
     {
@@ -929,7 +930,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -966,14 +968,14 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (instance) (rate(node_network_transmit_bytes_total{kubernetes_name=\"\",device!=\"lo\"}[10s]))",
+          "expr": "sum by (instance) (rate(node_network_transmit_bytes_total{kubernetes_name=\"\",device!=\"lo\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Tx (10s) bytes/s",
+      "title": "Tx bytes/s",
       "type": "timeseries"
     },
     {
@@ -1036,7 +1038,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1136,7 +1139,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1694,6 +1698,6 @@
   "timezone": "",
   "title": "Board Hub Monitoring Dashboard",
   "uid": "a98fd2df-6521-446c-bcda-b2ae3861b431",
-  "version": 34,
+  "version": 3,
   "weekStart": ""
 }
