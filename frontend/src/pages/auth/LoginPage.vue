@@ -55,7 +55,7 @@ const login = () => {
       <!-- Form start -->
       <q-form @submit.prevent="login">
         <q-card-section>
-          <q-input v-model="username" dense label="Username Address" outlined type="username"></q-input>
+          <q-input v-model="username" dense label="Username" outlined type="text"></q-input>
           <q-input v-model="password" class="q-mt-md" dense label="Password" outlined type="password"></q-input>
         </q-card-section>
 
