@@ -52,20 +52,20 @@ func TestIntegrationPsqlRepository(t *testing.T) {
 
 		// then
 		assert.NoError(t, err)
-		assertTableExists(t, repository.db, "users", []string{"id", "email", "password"})
+		assertTableExists(t, repository.db, "users", []string{"id", "username", "password"})
 	})
 
-	t.Run("FindUserByEmail", func(t *testing.T) {
+	t.Run("FindUserByName", func(t *testing.T) {
 		t.Cleanup(clearTables(t, repository.db))
 
 		// given
 		user := []model.DbUser{
 			{
-				Email:    "email@example.com",
+				Username: "user1",
 				Password: []byte("password"),
 			},
 			{
-				Email:    "user@example.com",
+				Username: "user2",
 				Password: []byte("password"),
 			},
 		}
@@ -75,8 +75,8 @@ func TestIntegrationPsqlRepository(t *testing.T) {
 		}
 
 		// when
-		id := getUserFromDatabase(t, repository.db, user[0].Email).ID
-		foundUser, err := repository.FindUserByEmail(user[0].Email)
+		id := getUserFromDatabase(t, repository.db, user[0].Username).ID
+		foundUser, err := repository.FindUserByName(user[0].Username)
 
 		// test
 		assert.NoError(t, err)
@@ -88,7 +88,7 @@ func TestIntegrationPsqlRepository(t *testing.T) {
 
 		// given
 		user := model.DbUser{
-			Email:    "email@example.com",
+			Username: "user",
 			Password: []byte("password"),
 		}
 
@@ -97,20 +97,20 @@ func TestIntegrationPsqlRepository(t *testing.T) {
 
 		// then
 		assert.NoError(t, err)
-		assert.NotNil(t, getUserFromDatabase(t, repository.db, user.Email))
+		assert.NotNil(t, getUserFromDatabase(t, repository.db, user.Username))
 	})
 }
 
 func insertUser(t *testing.T, db *sql.DB, user *model.DbUser) {
-	_, err := db.Exec(`insert into users (email, password) values ($1, $2)`, user.Email, user.Password)
+	_, err := db.Exec(`insert into users (username, password) values ($1, $2)`, user.Username, user.Password)
 	if err != nil {
 		t.Logf("could not insert user: %s", err.Error())
 		t.FailNow()
 	}
 }
 
-func getUserFromDatabase(t *testing.T, db *sql.DB, email string) *model.DbUser {
-	row := db.QueryRow(`select id from users where email = $1`, email)
+func getUserFromDatabase(t *testing.T, db *sql.DB, username string) *model.DbUser {
+	row := db.QueryRow(`select id from users where username = $1`, username)
 
 	var user model.DbUser
 	if err := row.Scan(&user.ID); err != nil {

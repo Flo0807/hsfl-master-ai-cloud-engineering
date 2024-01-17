@@ -32,14 +32,14 @@ func (a *AuthServiceServer) ValidateToken(_ context.Context, request *proto.Vali
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	email, exists := claims["email"].(string)
+	username, exists := claims["username"].(string)
 
 	if !exists {
 		log.Println("Verification failed: ", err.Error())
 		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
-	user, err := a.userRepository.FindUserByEmail(email)
+	user, err := a.userRepository.FindUserByName(username)
 
 	if err != nil {
 		log.Println("Verification failed: ", err.Error())
@@ -49,8 +49,8 @@ func (a *AuthServiceServer) ValidateToken(_ context.Context, request *proto.Vali
 	return &proto.ValidateTokenResponse{
 		Valid: true,
 		User: &proto.User{
-			Id:    uint64(user.ID),
-			Email: user.Email,
+			Id:       uint64(user.ID),
+			Username: user.Username,
 		},
 	}, nil
 }

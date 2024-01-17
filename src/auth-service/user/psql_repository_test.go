@@ -22,7 +22,7 @@ func TestPsqlRepositoryTest(t *testing.T) {
 		t.Run("return error if query fails", func(t *testing.T) {
 			// given
 			user := &model.DbUser{
-				Email:    "email",
+				Username: "user",
 				Password: []byte("password"),
 			}
 
@@ -40,7 +40,7 @@ func TestPsqlRepositoryTest(t *testing.T) {
 		t.Run("return nil if query succeeds", func(t *testing.T) {
 			//given
 			user := &model.DbUser{
-				Email:    "email",
+				Username: "user",
 				Password: []byte("password"),
 			}
 
@@ -56,18 +56,18 @@ func TestPsqlRepositoryTest(t *testing.T) {
 		})
 	})
 
-	t.Run("findUserByEmail", func(t *testing.T) {
+	t.Run("findUserByName", func(t *testing.T) {
 		t.Run("return error if query fails", func(t *testing.T) {
 			// given
-			email := "email@example.com"
+			name := "user"
 
 			dbmock.
-				ExpectQuery("SELECT id, email, password FROM users").
-				WithArgs(email).
+				ExpectQuery("SELECT id, username, password FROM users").
+				WithArgs(name).
 				WillReturnError(errors.New("database error"))
 
 			// when
-			_, err := repository.FindUserByEmail(email)
+			_, err := repository.FindUserByName(name)
 
 			// test
 			assert.Error(t, err)
@@ -75,15 +75,15 @@ func TestPsqlRepositoryTest(t *testing.T) {
 
 		t.Run("return user if query succeeds", func(t *testing.T) {
 			// given
-			email := "email@example.com"
+			name := "user"
 
 			dbmock.
-				ExpectQuery("SELECT id, email, password FROM users").
-				WithArgs(email).
-				WillReturnRows(sqlmock.NewRows([]string{"id", "email", "password"}).AddRow(1, email, []byte("password")))
+				ExpectQuery("SELECT id, username, password FROM users").
+				WithArgs(name).
+				WillReturnRows(sqlmock.NewRows([]string{"id", "username", "password"}).AddRow(1, name, []byte("password")))
 
 			// when
-			user, err := repository.FindUserByEmail(email)
+			user, err := repository.FindUserByName(name)
 
 			// test
 			assert.NoError(t, err)

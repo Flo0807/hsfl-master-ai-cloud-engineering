@@ -36,11 +36,11 @@ func TestValidateToken(t *testing.T) {
 		tokenGenerator.
 			EXPECT().
 			ValidateToken(gomock.Any()).
-			Return(map[string]interface{}{"email": "nonexistent@example.com"}, nil)
+			Return(map[string]interface{}{"username": "nonexistent@example.com"}, nil)
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("nonexistent@example.com").
+			FindUserByName("nonexistent@example.com").
 			Return(nil, errors.New("user does not exist"))
 
 		_, err := server.ValidateToken(ctx, &proto.ValidateTokenRequest{Token: "valid token"})
@@ -52,17 +52,17 @@ func TestValidateToken(t *testing.T) {
 		tokenGenerator.
 			EXPECT().
 			ValidateToken(gomock.Any()).
-			Return(map[string]interface{}{"email": "user@example.com"}, nil)
+			Return(map[string]interface{}{"username": "user"}, nil)
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("user@example.com").
-			Return(&model.DbUser{ID: 1, Email: "user@example.com"}, nil)
+			FindUserByName("user").
+			Return(&model.DbUser{ID: 1, Username: "user"}, nil)
 
 		response, err := server.ValidateToken(ctx, &proto.ValidateTokenRequest{Token: "valid token"})
 
 		assert.NoError(t, err)
 		assert.Equal(t, uint64(1), response.User.Id)
-		assert.Equal(t, "user@example.com", response.User.Email)
+		assert.Equal(t, "user", response.User.Username)
 	})
 }

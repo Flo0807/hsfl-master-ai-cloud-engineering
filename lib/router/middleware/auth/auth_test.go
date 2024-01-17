@@ -60,8 +60,8 @@ func TestCreateAuthMiddleware(t *testing.T) {
 			Return(&auth.ValidateTokenResponse{
 				Valid: true,
 				User: &auth.User{
-					Id:    1,
-					Email: "email@example.com",
+					Id:       1,
+					Username: "test",
 				},
 			}, nil)
 

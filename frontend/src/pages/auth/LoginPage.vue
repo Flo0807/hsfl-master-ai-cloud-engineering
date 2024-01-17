@@ -1,30 +1,30 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import {useAuthStore} from 'stores/auth-store';
-import {useQuasar} from 'quasar';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from 'stores/auth-store';
+import { useQuasar } from 'quasar';
 
 const $q = useQuasar()
 const route = useRoute();
 const router = useRouter()
 const authStore = useAuthStore();
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 
 const goToRegister = () => {
-  router.push({name: 'register'})
+  router.push({ name: 'register' })
 }
 
 const resetInputs = () => {
-  email.value = '';
+  username.value = '';
   password.value = '';
 }
 
 const login = () => {
   authStore.login(
     {
-      email: email.value,
+      username: username.value,
       password: password.value
     }
   ).then(
@@ -55,19 +55,21 @@ const login = () => {
       <!-- Form start -->
       <q-form @submit.prevent="login">
         <q-card-section>
-          <q-input v-model="email" dense label="Email Address" outlined type="email"></q-input>
+          <q-input v-model="username" dense label="Username" outlined type="text"></q-input>
           <q-input v-model="password" class="q-mt-md" dense label="Password" outlined type="password"></q-input>
         </q-card-section>
 
         <q-card-section>
-          <q-btn class="full-width" color="dark" label="Sign in" no-caps rounded size="md" style="border-radius: 8px;" type="submit"></q-btn>
+          <q-btn class="full-width" color="dark" label="Sign in" no-caps rounded size="md" style="border-radius: 8px;"
+            type="submit"></q-btn>
         </q-card-section>
       </q-form>
       <!-- Form end -->
 
       <q-card-section class="text-center q-pt-none">
         <div class="text-grey-8">Don't have an account yet?
-          <a class="text-dark text-weight-bold" style="text-decoration: none; cursor: pointer" @click="goToRegister">Sign up.</a>
+          <a class="text-dark text-weight-bold" style="text-decoration: none; cursor: pointer" @click="goToRegister">Sign
+            up.</a>
         </div>
       </q-card-section>
     </q-card>

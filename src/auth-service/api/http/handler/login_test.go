@@ -48,7 +48,7 @@ func TestLoginHandler(t *testing.T) {
 
 	t.Run("should return 400 BAD REQUEST if payload is not valid", func(t *testing.T) {
 		tests := []io.Reader{
-			strings.NewReader(`{"email": "email@example.com"}`),
+			strings.NewReader(`{"username": "user"}`),
 			strings.NewReader(`{"password": "pw"}`),
 			strings.NewReader(`{"random": "random"}`),
 		}
@@ -69,11 +69,11 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 401 UNAUTHORIZED if user does not exist", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"username": "user", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("email@example.com").
+			FindUserByName("user").
 			Return(nil, sql.ErrNoRows)
 
 		// when
@@ -87,11 +87,11 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 401 UNAUTHORIZED if password is invalid", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"username": "user", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("email@example.com").
+			FindUserByName("user").
 			Return(&model.DbUser{Password: []byte("random")}, nil)
 
 		hasher.
@@ -110,11 +110,11 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 500 INTERNAL SERVER ERROR if user repository fails", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"username": "user", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("email@example.com").
+			FindUserByName("user").
 			Return(nil, errors.New("database error"))
 
 		// when
@@ -128,12 +128,12 @@ func TestLoginHandler(t *testing.T) {
 	t.Run("should return 200 OK", func(t *testing.T) {
 		// given
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"email": "email@example.com", "password": "password"}`))
+		r := httptest.NewRequest("POST", "/login", strings.NewReader(`{"username": "user", "password": "password"}`))
 
 		userRepository.
 			EXPECT().
-			FindUserByEmail("email@example.com").
-			Return(&model.DbUser{ID: 0, Email: "email@example.com", Password: []byte("password")}, nil)
+			FindUserByName("user").
+			Return(&model.DbUser{ID: 0, Username: "user", Password: []byte("password")}, nil)
 
 		hasher.
 			EXPECT().

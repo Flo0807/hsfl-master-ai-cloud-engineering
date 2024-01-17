@@ -52,19 +52,19 @@ func (mr *MockRepositoryMockRecorder) CreateUser(user any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockRepository)(nil).CreateUser), user)
 }
 
-// FindUserByEmail mocks base method.
-func (m *MockRepository) FindUserByEmail(email string) (*model.DbUser, error) {
+// FindUserByName mocks base method.
+func (m *MockRepository) FindUserByName(username string) (*model.DbUser, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindUserByEmail", email)
+	ret := m.ctrl.Call(m, "FindUserByName", username)
 	ret0, _ := ret[0].(*model.DbUser)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindUserByEmail indicates an expected call of FindUserByEmail.
-func (mr *MockRepositoryMockRecorder) FindUserByEmail(email any) *gomock.Call {
+// FindUserByName indicates an expected call of FindUserByName.
+func (mr *MockRepositoryMockRecorder) FindUserByName(username any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByEmail", reflect.TypeOf((*MockRepository)(nil).FindUserByEmail), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByName", reflect.TypeOf((*MockRepository)(nil).FindUserByName), username)
 }
 
 // Migrate mocks base method.

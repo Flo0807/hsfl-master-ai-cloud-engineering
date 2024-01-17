@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
-import {useRouter} from 'vue-router';
-import {useAuthStore} from 'stores/auth-store';
-import {useQuasar} from 'quasar';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from 'stores/auth-store';
+import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
 const passwordRepeated = ref('')
 
@@ -16,7 +16,7 @@ const register = () => {
   if (password.value === passwordRepeated.value) {
     authStore.register(
       {
-        email: email.value,
+        username: username.value,
         password: password.value
       }
     ).then(() => {
@@ -34,13 +34,13 @@ const register = () => {
 }
 
 const resetInputs = () => {
-  email.value = '';
+  username.value = '';
   password.value = '';
   passwordRepeated.value = '';
 }
 
 const goToLogin = () => {
-  router.push({name: 'login'})
+  router.push({ name: 'login' })
 }
 </script>
 
@@ -55,20 +55,23 @@ const goToLogin = () => {
       <!-- Form start -->
       <q-form @submit.prevent="register">
         <q-card-section>
-          <q-input v-model="email" dense label="Email Address" outlined type="email"></q-input>
+          <q-input v-model="username" dense label="Username Address" outlined type="username"></q-input>
           <q-input v-model="password" class="q-mt-md" dense label="Password" outlined type="password"></q-input>
-          <q-input v-model="passwordRepeated" class="q-mt-md" dense label="Repeat Password" outlined type="password"></q-input>
+          <q-input v-model="passwordRepeated" class="q-mt-md" dense label="Repeat Password" outlined
+            type="password"></q-input>
         </q-card-section>
 
         <q-card-section>
-          <q-btn class="full-width" color="dark" label="Register" no-caps rounded size="md" style="border-radius: 8px;" type="submit"></q-btn>
+          <q-btn class="full-width" color="dark" label="Register" no-caps rounded size="md" style="border-radius: 8px;"
+            type="submit"></q-btn>
         </q-card-section>
       </q-form>
       <!-- Form end -->
 
       <q-card-section class="text-center q-pt-none">
         <div class="text-grey-8">Already have an account?
-          <a class="text-dark text-weight-bold" style="text-decoration: none; cursor: pointer" @click="goToLogin">Sign in.</a>
+          <a class="text-dark text-weight-bold" style="text-decoration: none; cursor: pointer" @click="goToLogin">Sign
+            in.</a>
         </div>
       </q-card-section>
     </q-card>

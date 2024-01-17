@@ -74,9 +74,9 @@ The database is automatically populated with example data when the application i
 
 An example user is created with the following credentials:
 
-| Email              | Password   |
+| Username              | Password   |
 | ------------------ | ---------- |
-| `user@example.com` | `password` |
+| `test` | `test` |
 
 Along with some example posts.
 
