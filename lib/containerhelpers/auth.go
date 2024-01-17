@@ -7,7 +7,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func StartAuthService() (testcontainers.Container, error) {
+func StartAuthService(dbHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        "hsfl-master-ai-cloud-engineering-auth-service",
 		ExposedPorts: []string{"3000"},
@@ -15,7 +15,7 @@ func StartAuthService() (testcontainers.Container, error) {
 			"HTTP_SERVER_PORT": "3000",
 			"GRPC_SERVER_PORT": "50051",
 			"JWT_PRIVATE_KEY":  "./key",
-			"DB_HOST":          "postgres",
+			"DB_HOST":          dbHost,
 			"DB_PORT":          "5432",
 			"DB_USER":          "postgres",
 			"DB_PASSWORD":      "password",

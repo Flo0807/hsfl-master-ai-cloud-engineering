@@ -7,14 +7,14 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func StartBulletinService() (testcontainers.Container, error) {
+func StartBulletinService(dbHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        "hsfl-master-ai-cloud-engineering-bulletin-board-service",
 		ExposedPorts: []string{"3000"},
 		Env: map[string]string{
 			"HTTP_SERVER_PORT":      "3000",
 			"GRPC_SERVER_PORT":      "50052",
-			"DB_HOST":               "postgres",
+			"DB_HOST":               dbHost,
 			"DB_PORT":               "5432",
 			"DB_USER":               "postgres",
 			"DB_PASSWORD":           "password",

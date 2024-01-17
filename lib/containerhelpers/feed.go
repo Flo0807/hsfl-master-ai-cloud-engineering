@@ -2,18 +2,19 @@ package containerhelpers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-func StartFeedService() (testcontainers.Container, error) {
+func StartFeedService(bulletinBoardHost string) (testcontainers.Container, error) {
 	req := testcontainers.ContainerRequest{
 		Image:        "hsfl-master-ai-cloud-engineering-feed-service",
 		ExposedPorts: []string{"3000"},
 		Env: map[string]string{
 			"HTTP_SERVER_PORT":                "3000",
-			"BULLETIN_BOARD_SERVICE_URL_GRPC": "bulletin-board-service:50052",
+			"BULLETIN_BOARD_SERVICE_URL_GRPC": fmt.Sprintf("%s:50052", bulletinBoardHost),
 		},
 		WaitingFor: wait.ForListeningPort("3000"),
 	}

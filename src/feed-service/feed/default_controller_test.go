@@ -128,35 +128,60 @@ func TestIntegration(t *testing.T) {
 	}
 	fmt.Println(postgres.GetContainerID())
 
-	authService, err := containerhelpers.StartAuthService()
+	posgtresIp, err := postgres.ContainerIP(context.Background())
+
 	if err != nil {
-		t.Fatalf("could not start postgres container: %s", err.Error())
+		t.Fatalf("could not get postgres container ip: %s", err.Error())
+	}
+
+	authService, err := containerhelpers.StartAuthService(posgtresIp)
+	if err != nil {
+		t.Fatalf("could not start auth container: %s", err.Error())
 	}
 	fmt.Println(authService.GetContainerID())
 
-	bulletinContainer, err := containerhelpers.StartBulletinService()
+	bulletinContainer, err := containerhelpers.StartBulletinService(posgtresIp)
 	if err != nil {
-		t.Fatalf("could not start postgres container: %s", err.Error())
+		t.Fatalf("could not start bulletin-board container: %s", err.Error())
 	}
 	fmt.Println(bulletinContainer.GetContainerID())
 
-	gateway, err := containerhelpers.StartGatewayService()
+	// gateway, err := containerhelpers.StartGatewayService()
+	// if err != nil {
+	// 	t.Fatalf("could not start gateway container: %s", err.Error())
+	// }
+	// fmt.Println(gateway.GetContainerID())
+
+	bulletinBoardIp, err := bulletinContainer.ContainerIP(context.Background())
+
 	if err != nil {
-		t.Fatalf("could not start postgres container: %s", err.Error())
+		t.Fatalf("could not get bulletin-board container ip: %s", err.Error())
 	}
-	fmt.Println(gateway.GetContainerID())
-	feedContainer, err := containerhelpers.StartFeedService()
+
+	feedContainer, err := containerhelpers.StartFeedService(bulletinBoardIp)
 	if err != nil {
 		t.Fatalf("could not start postgres container: %s", err.Error())
 	}
 	fmt.Println(feedContainer.GetContainerID())
 
-	endpoint, err := gateway.Endpoint(context.Background(), "")
+	feedIp, err := feedContainer.ContainerIP(context.Background())
+
 	if err != nil {
-		t.Error(err)
+		t.Fatalf("could not get feed container ip: %s", err.Error())
 	}
-	fmt.Println(endpoint)
-	req, err := http.NewRequest("GET", "http://"+endpoint+"/feed/healh", nil)
+
+	feedUrl := fmt.Sprintf("http://%s:%s/feed/health", feedIp, "3000")
+
+	resp, err := http.Get(feedUrl)
+
 	assert.NoError(t, err)
-	fmt.Println(req.Response.Status)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+	// endpoint, err := gateway.Endpoint(context.Background(), "")
+	// if err != nil {
+	// 	t.Error(err)
+	// }
+	// fmt.Println(endpoint)
+	// req, err := http.NewRequest("GET", "http://"+endpoint+"/feed/healh", nil)
+	// assert.NoError(t, err)
 }
