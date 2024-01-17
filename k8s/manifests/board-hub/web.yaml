@@ -36,3 +36,36 @@ spec:
           env:
             - name: HTTP_SERVER_PORT
               value: "3000"
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m
+---
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: web
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: ContainerResource
+      containerResource:
+        name: cpu
+        container: web-service
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 50
