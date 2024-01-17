@@ -48,7 +48,7 @@ minikube addons enable ingress
 Deploy the application:
 
 ```
-kubectl create -f . --recursive
+kubectl apply -f k8s/manifests --recursive
 ```
 
 Only in docker desktop: Run `minikube tunnel` to expose the ingress controller to the host. (see [Ingres documentation](https://minikube.sigs.k8s.io/docs/start/))
@@ -62,7 +62,7 @@ Make sure you have a working Kubernetes cluster with an ingress controller runni
 Deploy the application:
 
 ```
-kubectl create -f . --recursive
+kubectl apply -f k8s/manifests --recursive
 ```
 
 Run `kubectl get ingress` to get the ingress IP address.
@@ -77,3 +77,18 @@ proxy-ingress   nginx   *       192.168.49.2   80      13m
 
 Access the application at `http://<ingress-ip>:80`.
 
+## Monitoring
+
+### Access grafana
+
+Use the following command to get the grafana port:
+
+```
+❯ kubectl get service/grafana --namespace=monitoring
+NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+grafana   NodePort   10.110.91.191   <none>        3000:32702/TCP   17h
+```
+
+When using minikube, run `minikube service grafana --namespace=monitoring` to open grafana in the browser.
+
+Default grafana credentials are `admin` and `admin`.
